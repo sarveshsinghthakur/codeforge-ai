@@ -120,7 +120,7 @@ def main():
         old.unlink()
 
     ddl, tables = compile_ddl()
-    (OUT_DIR / "00_schema.sql").write_text(ddl, encoding="utf-8")
+    (OUT_DIR / "000_schema.sql").write_text(ddl, encoding="utf-8")
     print(f"schema: {len(ddl):,} bytes")
 
     con = sqlite3.connect(str(SQLITE_DB))
