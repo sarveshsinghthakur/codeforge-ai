@@ -1,0 +1,1787 @@
+[
+ {
+  "slug": "3sum",
+  "title": "3Sum",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "two-pointers",
+   "sorting"
+  ],
+  "sig": {
+   "python": "def threeSum(self, nums: list[int]) -> list[list[int]]:",
+   "javascript": "(none)",
+   "java": "public List<List<Integer>> threeSum(int[] nums) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "nums = [-1,0,1,2,-1,-4]",
+   "output": "[[-1,-1,2],[-1,0,1]]",
+   "explanation": ""
+  },
+  "ct": "O(n^2)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "add-binary",
+  "title": "Add Binary",
+  "diff": "easy",
+  "topics": [
+   "math",
+   "string",
+   "bit-manipulation",
+   "simulation"
+  ],
+  "sig": {
+   "python": "def addBinary(self, a: str, b: str) -> str:",
+   "javascript": "(none)",
+   "java": "public String addBinary(String a, String b) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "a = \"11\", b = \"1\"",
+   "output": "100",
+   "explanation": ""
+  },
+  "ct": "O(max(m,n))",
+  "cs": "O(max(m,n))"
+ },
+ {
+  "slug": "add-two-numbers",
+  "title": "Add Two Numbers",
+  "diff": "medium",
+  "topics": [
+   "linked-list",
+   "math",
+   "recursion"
+  ],
+  "sig": {
+   "python": "def __init__(self, val=0, next=None):",
+   "javascript": "(none)",
+   "java": "public ListNode addTwoNumbers(ListNode l1, ListNode l2) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "l1 = [2,4,3], l2 = [5,6,4]",
+   "output": "[7,0,8]",
+   "explanation": "342 + 465 = 807."
+  },
+  "ct": "O(max(m,n))",
+  "cs": "O(max(m,n))"
+ },
+ {
+  "slug": "alien-dictionary",
+  "title": "Alien Dictionary",
+  "diff": "hard",
+  "topics": [
+   "graph",
+   "topological-sort"
+  ],
+  "sig": {
+   "python": "def alienOrder(self, words: list[str]) -> str:",
+   "javascript": "(none)",
+   "java": "public String alienOrder(String[] words) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "words = [\"wrt\",\"wrf\",\"er\",\"ett\",\"rftt\"]",
+   "output": "\"wertf\"",
+   "explanation": ""
+  },
+  "ct": "O(C)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "best-time-to-buy-and-sell-stock",
+  "title": "Best Time to Buy and Sell Stock",
+  "diff": "easy",
+  "topics": [
+   "array",
+   "dynamic-programming"
+  ],
+  "sig": {
+   "python": "def maxProfit(self, prices: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int maxProfit(int[] prices) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "prices = [7,1,5,3,6,4]",
+   "output": "5",
+   "explanation": "Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5."
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "binary-tree-inorder-traversal",
+  "title": "Binary Tree Inorder Traversal",
+  "diff": "easy",
+  "topics": [
+   "stack",
+   "tree",
+   "depth-first-search",
+   "binary-tree"
+  ],
+  "sig": {
+   "python": "def __init__(self, val=0, left=None, right=None):",
+   "javascript": "(none)",
+   "java": "public List<Integer> inorderTraversal(TreeNode root) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "root = [1,null,2,3]",
+   "output": "[1,3,2]",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(h)"
+ },
+ {
+  "slug": "binary-tree-level-order-traversal",
+  "title": "Binary Tree Level Order Traversal",
+  "diff": "medium",
+  "topics": [
+   "tree",
+   "bfs",
+   "binary-tree"
+  ],
+  "sig": {
+   "python": "def __init__(self, val=0, left=None, right=None):",
+   "javascript": "(none)",
+   "java": "public List<List<Integer>> levelOrder(TreeNode root) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "root = [3,9,20,null,null,15,7]",
+   "output": "[[3],[9,20],[15,7]]",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "binary-tree-maximum-path-sum",
+  "title": "Binary Tree Maximum Path Sum",
+  "diff": "hard",
+  "topics": [
+   "tree",
+   "depth-first-search",
+   "binary-tree"
+  ],
+  "sig": {
+   "python": "def __init__(self, val=0, left=None, right=None):",
+   "javascript": "(none)",
+   "java": "public int maxPathSum(TreeNode root) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "root = [1,2,3]",
+   "output": "6",
+   "explanation": "2 + 1 + 3 = 6"
+  },
+  "ct": "O(n)",
+  "cs": "O(h)"
+ },
+ {
+  "slug": "climbing-stairs",
+  "title": "Climbing Stairs",
+  "diff": "easy",
+  "topics": [
+   "math",
+   "dynamic-programming",
+   "memoization"
+  ],
+  "sig": {
+   "python": "def climbStairs(self, n: int) -> int:",
+   "javascript": "(none)",
+   "java": "public int climbStairs(int n) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "n = 2",
+   "output": "2",
+   "explanation": "1. 1 step + 1 step\n2. 2 steps"
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "climbing-stairs-ii",
+  "title": "Climbing Stairs II",
+  "diff": "hard",
+  "topics": [
+   "array",
+   "dynamic-programming"
+  ],
+  "sig": {
+   "python": "def minCostClimbingStairs(self, cost: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int minCostClimbingStairs(int[] cost) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "costs = [10,15,20]",
+   "output": "15",
+   "explanation": "Climb step 2 (cost 15)."
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "clone-graph",
+  "title": "Clone Graph",
+  "diff": "medium",
+  "topics": [
+   "hash-table",
+   "depth-first-search",
+   "bfs",
+   "graph"
+  ],
+  "sig": {
+   "python": "def __init__(self, val = 0, neighbors = None):",
+   "javascript": "(none)",
+   "java": "public Node cloneGraph(Node node) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "adjList = [[2,4],[1,3],[2,4],[1,3]]",
+   "output": "[[2,4],[1,3],[2,4],[1,3]]",
+   "explanation": ""
+  },
+  "ct": "O(V+E)",
+  "cs": "O(V)"
+ },
+ {
+  "slug": "coin-change",
+  "title": "Coin Change",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "dynamic-programming",
+   "bfs"
+  ],
+  "sig": {
+   "python": "def coinChange(self, coins: list[int], amount: int) -> int:",
+   "javascript": "(none)",
+   "java": "public int coinChange(int[] coins, int amount) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "coins = [1,5,10,25], amount = 30",
+   "output": "2",
+   "explanation": "5 + 25 = 30."
+  },
+  "ct": "O(amount * n)",
+  "cs": "O(amount)"
+ },
+ {
+  "slug": "combination-sum",
+  "title": "Combination Sum",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "backtracking"
+  ],
+  "sig": {
+   "python": "def combinationSum(self, candidates: list[int], target: int) -> list[list[int]]:",
+   "javascript": "(none)",
+   "java": "public List<List<Integer>> combinationSum(int[] candidates, int target) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "candidates = [2,3,6,7], target = 7",
+   "output": "[[2,2,3],[7]]",
+   "explanation": ""
+  },
+  "ct": "O(n^(t/m))",
+  "cs": "O(t/m)"
+ },
+ {
+  "slug": "container-with-most-water",
+  "title": "Container With Most Water",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "two-pointers",
+   "greedy"
+  ],
+  "sig": {
+   "python": "def maxArea(self, height: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int maxArea(int[] height) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "height = [1,8,6,2,5,4,8,3,7]",
+   "output": "49",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "contains-duplicate",
+  "title": "Contains Duplicate",
+  "diff": "easy",
+  "topics": [
+   "array",
+   "hash-table",
+   "sorting"
+  ],
+  "sig": {
+   "python": "def containsDuplicate(self, nums: list[int]) -> bool:",
+   "javascript": "(none)",
+   "java": "public boolean containsDuplicate(int[] nums) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "nums = [1,2,3,1]",
+   "output": "true",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "convert-sorted-array-to-bst",
+  "title": "Convert Sorted Array to BST",
+  "diff": "easy",
+  "topics": [
+   "tree",
+   "depth-first-search",
+   "array",
+   "binary-search-tree",
+   "binary-tree"
+  ],
+  "sig": {
+   "python": "def __init__(self, val=0, left=None, right=None):",
+   "javascript": "(none)",
+   "java": "public TreeNode sortedArrayToBST(int[] nums) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "nums = [-10,-3,0,5,9]",
+   "output": "[0,-3,9,-10,null,5]",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(log n)"
+ },
+ {
+  "slug": "count-and-say",
+  "title": "Count and Say",
+  "diff": "easy",
+  "topics": [
+   "string",
+   "simulation"
+  ],
+  "sig": {
+   "python": "def countAndSay(self, n: int) -> str:",
+   "javascript": "(none)",
+   "java": "public String countAndSay(int n) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "n = 1",
+   "output": "1",
+   "explanation": ""
+  },
+  "ct": "O(n * m)",
+  "cs": "O(m)"
+ },
+ {
+  "slug": "count-even-numbers",
+  "title": "Count Even Numbers 7",
+  "diff": "easy",
+  "topics": [
+   "array",
+   "math"
+  ],
+  "sig": {
+   "python": "def countEvens(self, nums: List[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int countEvens(int[] nums) {"
+  },
+  "ncases": 13,
+  "example": {
+   "input": "nums = [0]",
+   "output": "1"
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "course-schedule",
+  "title": "Course Schedule",
+  "diff": "medium",
+  "topics": [
+   "graph",
+   "depth-first-search",
+   "bfs",
+   "topological-sort"
+  ],
+  "sig": {
+   "python": "def canFinish(self, numCourses: int, prerequisites: list[list[int]]) -> bool:",
+   "javascript": "(none)",
+   "java": "public boolean canFinish(int numCourses, int[][] prerequisites) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "numCourses = 2, prerequisites = [[1,0]]",
+   "output": "true",
+   "explanation": ""
+  },
+  "ct": "O(V+E)",
+  "cs": "O(V+E)"
+ },
+ {
+  "slug": "decode-ways",
+  "title": "Decode Ways",
+  "diff": "medium",
+  "topics": [
+   "string",
+   "dynamic-programming"
+  ],
+  "sig": {
+   "python": "def numDecodings(self, s: str) -> int:",
+   "javascript": "(none)",
+   "java": "public int numDecodings(String s) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "s = \"12\"",
+   "output": "2",
+   "explanation": "\"12\" can be decoded as \"AB\" (1 2) or \"L\" (12)."
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "edit-distance",
+  "title": "Edit Distance",
+  "diff": "hard",
+  "topics": [
+   "string",
+   "dynamic-programming"
+  ],
+  "sig": {
+   "python": "def minDistance(self, word1: str, word2: str) -> int:",
+   "javascript": "(none)",
+   "java": "public int minDistance(String word1, String word2) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "word1 = \"horse\", word2 = \"ros\"",
+   "output": "3",
+   "explanation": "r->h, h->o, e->r (replace h->o, replace r->s, delete e)"
+  },
+  "ct": "O(m*n)",
+  "cs": "O(m*n)"
+ },
+ {
+  "slug": "fibonacci-number",
+  "title": "Fibonacci Number",
+  "diff": "easy",
+  "topics": [
+   "dynamic-programming",
+   "math",
+   "recursion"
+  ],
+  "sig": {
+   "python": "def fib(self, n: int) -> int:",
+   "javascript": "(none)",
+   "java": "public int fib(int n) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "n = 2",
+   "output": "1",
+   "explanation": "F(2) = F(1) + F(0) = 1 + 0 = 1"
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "find-maximum-in-array",
+  "title": "Find Maximum in Array 3",
+  "diff": "easy",
+  "topics": [
+   "array"
+  ],
+  "sig": {
+   "python": "def findMax(self, nums: List[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int findMax(int[] nums) {"
+  },
+  "ncases": 13,
+  "example": {
+   "input": "nums = [1]",
+   "output": "1"
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "find-median-from-data-stream",
+  "title": "Find Median from Data Stream",
+  "diff": "hard",
+  "topics": [
+   "two-pointers",
+   "design",
+   "sorting",
+   "heap"
+  ],
+  "sig": {
+   "python": "def __init__(self):",
+   "javascript": "(none)",
+   "java": "public MedianFinder() {}"
+  },
+  "ncases": 2,
+  "example": {
+   "input": "[\"MedianFinder\",\"addNum\",\"addNum\",\"findMedian\",\"addNum\",\"findMedian\"]",
+   "output": "[null,null,null,1.5,null,2.0]",
+   "explanation": ""
+  },
+  "ct": "O(log n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "find-minimum-in-rotated-sorted-array",
+  "title": "Find Minimum in Rotated Sorted Array",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "binary-search"
+  ],
+  "sig": {
+   "python": "def findMin(self, nums: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int findMin(int[] nums) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "nums = [3,4,5,1,2]",
+   "output": "1",
+   "explanation": ""
+  },
+  "ct": "O(log n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "flatten-binary-tree-to-linked-list",
+  "title": "Flatten Binary Tree to Linked List",
+  "diff": "medium",
+  "topics": [
+   "tree",
+   "depth-first-search",
+   "binary-tree"
+  ],
+  "sig": {
+   "python": "def __init__(self, val=0, left=None, right=None):",
+   "javascript": "(none)",
+   "java": "public void flatten(TreeNode root) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "root = [1,2,5,3,4,null,6]",
+   "output": "[1,null,2,null,3,null,4,null,5,null,6]",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(h)"
+ },
+ {
+  "slug": "generate-parentheses",
+  "title": "Generate Parentheses",
+  "diff": "medium",
+  "topics": [
+   "string",
+   "backtracking"
+  ],
+  "sig": {
+   "python": "def generateParenthesis(self, n: int) -> list[str]:",
+   "javascript": "(none)",
+   "java": "public List<String> generateParenthesis(int n) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "n = 3",
+   "output": "[\"((()))\",\"(()())\",\"(())()\",\"()(())\",\"()()()\"]",
+   "explanation": ""
+  },
+  "ct": "O(4^n / sqrt(n))",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "group-anagrams",
+  "title": "Group Anagrams",
+  "diff": "medium",
+  "topics": [
+   "hash-table",
+   "string",
+   "sorting"
+  ],
+  "sig": {
+   "python": "def groupAnagrams(self, strs: list[str]) -> list[list[str]]:",
+   "javascript": "(none)",
+   "java": "public List<List<String>> groupAnagrams(String[] strs) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "strs = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]",
+   "output": "[[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]",
+   "explanation": ""
+  },
+  "ct": "O(n * k log k)",
+  "cs": "O(n * k)"
+ },
+ {
+  "slug": "implement-trie",
+  "title": "Implement Trie (Prefix Tree)",
+  "diff": "medium",
+  "topics": [
+   "hash-table",
+   "string",
+   "design",
+   "trie"
+  ],
+  "sig": {
+   "python": "def __init__(self):",
+   "javascript": "(none)",
+   "java": "public Trie() {}"
+  },
+  "ncases": 2,
+  "example": {
+   "input": "[\"Trie\",\"insert\",\"search\",\"search\",\"startsWith\",\"insert\",\"search\"]",
+   "output": "[null,null,true,false,true,null,true]",
+   "explanation": ""
+  },
+  "ct": "O(m)",
+  "cs": "O(m)"
+ },
+ {
+  "slug": "interval-list-intersections",
+  "title": "Interval List Intersections 2",
+  "diff": "hard",
+  "topics": [
+   "array",
+   "two-pointers"
+  ],
+  "sig": {
+   "python": "def intervalIntersection(self, firstList: List[List[int]], secondList: List[List[int]]) -> List[List[int]]:",
+   "javascript": "(none)",
+   "java": "public int[][] intervalIntersection(int[][] firstList, int[][] secondList) {"
+  },
+  "ncases": 13,
+  "example": {
+   "input": "firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]]",
+   "output": "[[1,2],[5,5],[8,12],[15,23],[24,24],[25,25]]"
+  },
+  "ct": "O(m + n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "jump-game",
+  "title": "Jump Game",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "dynamic-programming",
+   "greedy"
+  ],
+  "sig": {
+   "python": "def canJump(self, nums: list[int]) -> bool:",
+   "javascript": "(none)",
+   "java": "public boolean canJump(int[] nums) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "nums = [2,3,1,1,4]",
+   "output": "true",
+   "explanation": "Jump 1 step from index 0 to 1, then 3 steps to the last index."
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "kth-largest-element-in-an-array",
+  "title": "Kth Largest Element in an Array",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "divide-and-conquer",
+   "sorting",
+   "heap",
+   "quickselect"
+  ],
+  "sig": {
+   "python": "def findKthLargest(self, nums: list[int], k: int) -> int:",
+   "javascript": "(none)",
+   "java": "public int findKthLargest(int[] nums, int k) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "nums = [3,2,1,5,6,4], k = 2",
+   "output": "5",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "length-of-last-word",
+  "title": "Length of Last Word",
+  "diff": "easy",
+  "topics": [
+   "string"
+  ],
+  "sig": {
+   "python": "def lengthOfLastWord(self, s: str) -> int:",
+   "javascript": "(none)",
+   "java": "public int lengthOfLastWord(String s) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "s = \"Hello World\"",
+   "output": "5",
+   "explanation": "The last word is \"World\" with length 5."
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "letter-combinations-of-a-phone-number",
+  "title": "Letter Combinations of a Phone Number",
+  "diff": "medium",
+  "topics": [
+   "hash-table",
+   "string",
+   "backtracking"
+  ],
+  "sig": {
+   "python": "def letterCombinations(self, digits: str) -> list[str]:",
+   "javascript": "(none)",
+   "java": "public List<String> letterCombinations(String digits) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "digits = \"23\"",
+   "output": "[\"ad\",\"ae\",\"af\",\"bd\",\"be\",\"bf\",\"cd\",\"ce\",\"cf\"]",
+   "explanation": ""
+  },
+  "ct": "O(4^n * n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "linked-list-cycle",
+  "title": "Linked List Cycle",
+  "diff": "easy",
+  "topics": [
+   "hash-table",
+   "linked-list",
+   "two-pointers"
+  ],
+  "sig": {
+   "python": "def __init__(self, x):",
+   "javascript": "(none)",
+   "java": "public boolean hasCycle(ListNode head) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "head = [3,2,0,-4], pos = 1",
+   "output": "true",
+   "explanation": "Tail connects to node at index 1."
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "longest-consecutive-sequence",
+  "title": "Longest Consecutive Sequence",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "hash-table",
+   "union-find"
+  ],
+  "sig": {
+   "python": "def longestConsecutive(self, nums: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int longestConsecutive(int[] nums) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "nums = [100,4,200,1,3,2]",
+   "output": "4",
+   "explanation": "The longest consecutive elements sequence is [1,2,3,4]."
+  },
+  "ct": "O(n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "longest-increasing-subsequence",
+  "title": "Longest Increasing Subsequence",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "binary-search",
+   "dynamic-programming"
+  ],
+  "sig": {
+   "python": "def lengthOfLIS(self, nums: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int lengthOfLIS(int[] nums) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "nums = [10,9,2,5,3,7,101,18]",
+   "output": "4",
+   "explanation": "The longest increasing subsequence is [2,3,7,101]."
+  },
+  "ct": "O(n log n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "longest-substring-without-repeating-characters",
+  "title": "Longest Substring Without Repeating Characters",
+  "diff": "medium",
+  "topics": [
+   "hash-table",
+   "string",
+   "sliding-window"
+  ],
+  "sig": {
+   "python": "def lengthOfLongestSubstring(self, s: str) -> int:",
+   "javascript": "(none)",
+   "java": "public int lengthOfLongestSubstring(String s) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "s = \"abcabcbb\"",
+   "output": "3",
+   "explanation": "The answer is \"abc\", with the length of 3."
+  },
+  "ct": "O(n)",
+  "cs": "O(min(m,n))"
+ },
+ {
+  "slug": "longest-valid-parentheses",
+  "title": "Longest Valid Parentheses",
+  "diff": "hard",
+  "topics": [
+   "string",
+   "dynamic-programming",
+   "stack"
+  ],
+  "sig": {
+   "python": "def longestValidParentheses(self, s: str) -> int:",
+   "javascript": "(none)",
+   "java": "public int longestValidParentheses(String s) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "s = \"(()\"",
+   "output": "2",
+   "explanation": "The longest valid parentheses substring is '()'"
+  },
+  "ct": "O(n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "lowest-common-ancestor-of-a-binary-tree",
+  "title": "Lowest Common Ancestor of a Binary Tree",
+  "diff": "medium",
+  "topics": [
+   "tree",
+   "depth-first-search",
+   "binary-tree"
+  ],
+  "sig": {
+   "python": "def __init__(self, x):",
+   "javascript": "(none)",
+   "java": "public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1",
+   "output": "3",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(h)"
+ },
+ {
+  "slug": "lru-cache",
+  "title": "LRU Cache",
+  "diff": "medium",
+  "topics": [
+   "hash-table",
+   "linked-list",
+   "design"
+  ],
+  "sig": {
+   "python": "def __init__(self, key=0, val=0):",
+   "javascript": "(none)",
+   "java": "public LRUCache(int capacity) {}"
+  },
+  "ncases": 2,
+  "example": {
+   "input": "[\"LRUCache\",\"put\",\"put\",\"get\",\"put\",\"get\",\"put\",\"get\",\"get\",\"get\"]",
+   "output": "[null,null,null,1,null,2,null,null,2,4]",
+   "explanation": ""
+  },
+  "ct": "O(1)",
+  "cs": "O(capacity)"
+ },
+ {
+  "slug": "majority-element",
+  "title": "Majority Element",
+  "diff": "easy",
+  "topics": [
+   "array",
+   "hash-table",
+   "divide-and-conquer",
+   "sorting",
+   "counting"
+  ],
+  "sig": {
+   "python": "def majorityElement(self, nums: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int majorityElement(int[] nums) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "nums = [3,2,3]",
+   "output": "3",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "maximum-depth-of-binary-tree",
+  "title": "Maximum Depth of Binary Tree",
+  "diff": "easy",
+  "topics": [
+   "tree",
+   "depth-first-search",
+   "bfs",
+   "binary-tree"
+  ],
+  "sig": {
+   "python": "def __init__(self, val=0, left=None, right=None):",
+   "javascript": "(none)",
+   "java": "public int maxDepth(TreeNode root) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "root = [3,9,20,null,null,15,7]",
+   "output": "3",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(h)"
+ },
+ {
+  "slug": "maximum-product-subarray",
+  "title": "Maximum Product Subarray",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "dynamic-programming"
+  ],
+  "sig": {
+   "python": "def maxProduct(self, nums: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int maxProduct(int[] nums) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "nums = [2,3,-2,4]",
+   "output": "6",
+   "explanation": "[2,3] has the largest product 6."
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "maximum-subarray",
+  "title": "Maximum Subarray",
+  "diff": "easy",
+  "topics": [
+   "array",
+   "divide-and-conquer",
+   "dynamic-programming"
+  ],
+  "sig": {
+   "python": "def maxSubArray(self, nums: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int maxSubArray(int[] nums) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "nums = [-2,1,-3,4,-1,2,1,-5,4]",
+   "output": "6",
+   "explanation": "The subarray [4,-1,2,1] has the largest sum 6."
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "median-of-two-sorted-arrays",
+  "title": "Median of Two Sorted Arrays",
+  "diff": "hard",
+  "topics": [
+   "array",
+   "binary-search",
+   "divide-and-conquer"
+  ],
+  "sig": {
+   "python": "def findMedianSortedArrays(self, nums1: list[int], nums2: list[int]) -> float:",
+   "javascript": "(none)",
+   "java": "public double findMedianSortedArrays(int[] nums1, int[] nums2) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "nums1 = [1,3], nums2 = [2]",
+   "output": "2.00000",
+   "explanation": "merged array = [1,2,3] and median is 2."
+  },
+  "ct": "O(log(min(m,n)))",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "meeting-rooms-ii",
+  "title": "Meeting Rooms II 5",
+  "diff": "hard",
+  "topics": [
+   "array",
+   "heap",
+   "greedy",
+   "sorting"
+  ],
+  "sig": {
+   "python": "def minMeetingRooms(self, intervals: List[List[int]]) -> int:",
+   "javascript": "(none)",
+   "java": "public int minMeetingRooms(int[][] intervals) {"
+  },
+  "ncases": 13,
+  "example": {
+   "input": "intervals = [[0,30],[5,10],[15,20]]",
+   "output": "2"
+  },
+  "ct": "O(n log n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "merge-intervals",
+  "title": "Merge Intervals",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "sorting"
+  ],
+  "sig": {
+   "python": "def merge(self, intervals: list[list[int]]) -> list[list[int]]:",
+   "javascript": "(none)",
+   "java": "public int[][] merge(int[][] intervals) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "intervals = [[1,3],[2,6],[8,10],[15,18]]",
+   "output": "[[1,6],[8,10],[15,18]]",
+   "explanation": ""
+  },
+  "ct": "O(n log n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "merge-k-sorted-lists",
+  "title": "Merge k Sorted Lists",
+  "diff": "hard",
+  "topics": [
+   "linked-list",
+   "heap",
+   "divide-and-conquer"
+  ],
+  "sig": {
+   "python": "def __init__(self, val=0, next=None):",
+   "javascript": "(none)",
+   "java": "public ListNode mergeKLists(ListNode[] lists) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "lists = [[1,4,5],[1,3,4],[2,6]]",
+   "output": "[1,1,2,3,4,4,5,6]",
+   "explanation": ""
+  },
+  "ct": "O(N log k)",
+  "cs": "O(k)"
+ },
+ {
+  "slug": "merge-two-sorted-lists",
+  "title": "Merge Two Sorted Lists",
+  "diff": "easy",
+  "topics": [
+   "linked-list",
+   "recursion"
+  ],
+  "sig": {
+   "python": "def __init__(self, val=0, next=None):",
+   "javascript": "(none)",
+   "java": "public ListNode mergeTwoLists(ListNode list1, ListNode list2) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "list1 = [1,2,4], list2 = [1,3,4]",
+   "output": "[1,1,2,3,4,4]",
+   "explanation": ""
+  },
+  "ct": "O(n+m)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "missing-number",
+  "title": "Missing Number",
+  "diff": "easy",
+  "topics": [
+   "array",
+   "hash-table",
+   "math",
+   "bit-manipulation",
+   "sorting"
+  ],
+  "sig": {
+   "python": "def missingNumber(self, nums: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int missingNumber(int[] nums) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "nums = [3,0,1]",
+   "output": "2",
+   "explanation": "n = 3 since there are 3 numbers, so all numbers are in the range [0,3]. 2 is the missing number."
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "n-queens",
+  "title": "N-Queens",
+  "diff": "hard",
+  "topics": [
+   "backtracking"
+  ],
+  "sig": {
+   "python": "def solveNQueens(self, n: int) -> list[list[str]]:",
+   "javascript": "(none)",
+   "java": "public List<List<String>> solveNQueens(int n) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "n = 4",
+   "output": "2",
+   "explanation": ""
+  },
+  "ct": "O(n!)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "number-of-islands",
+  "title": "Number of Islands",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "depth-first-search",
+   "bfs",
+   "matrix",
+   "union-find"
+  ],
+  "sig": {
+   "python": "def numIslands(self, grid: list[list[str]]) -> int:",
+   "javascript": "(none)",
+   "java": "public int numIslands(char[][] grid) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "grid = [[\"1\",\"1\",\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\"]]",
+   "output": "1",
+   "explanation": ""
+  },
+  "ct": "O(m*n)",
+  "cs": "O(m*n)"
+ },
+ {
+  "slug": "palindrome-number",
+  "title": "Palindrome Number",
+  "diff": "easy",
+  "topics": [
+   "math"
+  ],
+  "sig": {
+   "python": "def isPalindrome(self, x: int) -> bool:",
+   "javascript": "(none)",
+   "java": "public boolean isPalindrome(int x) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "x = 121",
+   "output": "true",
+   "explanation": ""
+  },
+  "ct": "O(log n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "plus-one",
+  "title": "Plus One",
+  "diff": "easy",
+  "topics": [
+   "array",
+   "math"
+  ],
+  "sig": {
+   "python": "def plusOne(self, digits: list[int]) -> list[int]:",
+   "javascript": "(none)",
+   "java": "public int[] plusOne(int[] digits) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "digits = [1,2,3]",
+   "output": "[1,2,4]",
+   "explanation": "123 + 1 = 124."
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "power-of-two",
+  "title": "Power of Two",
+  "diff": "easy",
+  "topics": [
+   "math",
+   "bit-manipulation",
+   "recursion"
+  ],
+  "sig": {
+   "python": "def isPowerOfTwo(self, n: int) -> bool:",
+   "javascript": "(none)",
+   "java": "public boolean isPowerOfTwo(int n) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "n = 16",
+   "output": "true",
+   "explanation": "2^4 = 16"
+  },
+  "ct": "O(1)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "product-of-array-except-self",
+  "title": "Product of Array Except Self",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "prefix-sum"
+  ],
+  "sig": {
+   "python": "def productExceptSelf(self, nums: list[int]) -> list[int]:",
+   "javascript": "(none)",
+   "java": "public int[] productExceptSelf(int[] nums) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "nums = [1,2,3,4]",
+   "output": "[24,12,8,6]",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "regular-expression-matching",
+  "title": "Regular Expression Matching",
+  "diff": "hard",
+  "topics": [
+   "string",
+   "dynamic-programming",
+   "recursion"
+  ],
+  "sig": {
+   "python": "def isMatch(self, s: str, p: str) -> bool:",
+   "javascript": "(none)",
+   "java": "public boolean isMatch(String s, String p) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "s = \"aa\", p = \"a\"",
+   "output": "false",
+   "explanation": ""
+  },
+  "ct": "O(m*n)",
+  "cs": "O(m*n)"
+ },
+ {
+  "slug": "reverse-string",
+  "title": "Reverse String",
+  "diff": "easy",
+  "topics": [
+   "two-pointers",
+   "string"
+  ],
+  "sig": {
+   "python": "def reverseString(self, s: list[str]) -> None:",
+   "javascript": "(none)",
+   "java": "public void reverseString(char[] s) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "s = [\"h\",\"e\",\"l\",\"l\",\"o\"]",
+   "output": "[\"o\",\"l\",\"l\",\"e\",\"h\"]",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "roman-to-integer",
+  "title": "Roman to Integer",
+  "diff": "easy",
+  "topics": [
+   "math",
+   "string",
+   "hash-table"
+  ],
+  "sig": {
+   "python": "def romanToInt(self, s: str) -> int:",
+   "javascript": "(none)",
+   "java": "public int romanToInt(String s) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "s = \"III\"",
+   "output": "3",
+   "explanation": "III = 3."
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "russian-doll-envelopes",
+  "title": "Russian Doll Envelopes",
+  "diff": "hard",
+  "topics": [
+   "array",
+   "binary-search",
+   "dynamic-programming"
+  ],
+  "sig": {
+   "python": "def maxEnvelopes(self, envelopes: list[list[int]]) -> int:",
+   "javascript": "(none)",
+   "java": "public int maxEnvelopes(int[][] envelopes) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "envelopes = [[5,4],[6,4],[6,7],[2,3]]",
+   "output": "3",
+   "explanation": "[2,3] -> [5,4] -> [6,7]"
+  },
+  "ct": "O(n log n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "search-in-rotated-sorted-array",
+  "title": "Search in Rotated Sorted Array",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "binary-search"
+  ],
+  "sig": {
+   "python": "def search(self, nums: list[int], target: int) -> int:",
+   "javascript": "(none)",
+   "java": "public int search(int[] nums, int target) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "nums = [4,5,6,7,0,1,2], target = 0",
+   "output": "4",
+   "explanation": ""
+  },
+  "ct": "O(log n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "search-insert-position",
+  "title": "Search Insert Position",
+  "diff": "easy",
+  "topics": [
+   "array",
+   "binary-search"
+  ],
+  "sig": {
+   "python": "def searchInsert(self, nums: list[int], target: int) -> int:",
+   "javascript": "(none)",
+   "java": "public int searchInsert(int[] nums, int target) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "nums = [1,3,5,6], target = 5",
+   "output": "2",
+   "explanation": ""
+  },
+  "ct": "O(log n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "serialize-and-deserialize-binary-tree",
+  "title": "Serialize and Deserialize Binary Tree",
+  "diff": "hard",
+  "topics": [
+   "tree",
+   "design",
+   "bfs",
+   "binary-tree"
+  ],
+  "sig": {
+   "python": "def __init__(self, val=0, left=None, right=None):",
+   "javascript": "(none)",
+   "java": "public class Codec {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "root = [1,2,3,null,null,4,5]",
+   "output": "[1,2,3,null,null,4,5]",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "single-number",
+  "title": "Single Number",
+  "diff": "easy",
+  "topics": [
+   "array",
+   "bit-manipulation"
+  ],
+  "sig": {
+   "python": "def singleNumber(self, nums: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int singleNumber(int[] nums) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "nums = [2,2,1]",
+   "output": "1",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "sliding-window-maximum",
+  "title": "Sliding Window Maximum",
+  "diff": "hard",
+  "topics": [
+   "array",
+   "queue",
+   "sliding-window",
+   "heap",
+   "monotonic-queue"
+  ],
+  "sig": {
+   "python": "def maxSlidingWindow(self, nums: list[int], k: int) -> list[int]:",
+   "javascript": "(none)",
+   "java": "public int[] maxSlidingWindow(int[] nums, int k) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "nums = [1,3,-1,-3,5,3,6,7], k = 3",
+   "output": "[3,3,5,5,6,7]",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(k)"
+ },
+ {
+  "slug": "sort-colors",
+  "title": "Sort Colors",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "two-pointers",
+   "sorting"
+  ],
+  "sig": {
+   "python": "def sortColors(self, nums: list[int]) -> None:",
+   "javascript": "(none)",
+   "java": "public void sortColors(int[] nums) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "nums = [2,0,2,1,1,0]",
+   "output": "[0,0,1,1,2,2]",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "sum-of-two-numbers",
+  "title": "Sum of Two Numbers 1",
+  "diff": "easy",
+  "topics": [
+   "math"
+  ],
+  "sig": {
+   "python": "def sumOfTwo(self, a: int, b: int) -> int:",
+   "javascript": "(none)",
+   "java": "public int sumOfTwo(int a, int b) {"
+  },
+  "ncases": 13,
+  "example": {
+   "input": "a = 0, b = 0",
+   "output": "0"
+  },
+  "ct": "O(1)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "symmetric-tree",
+  "title": "Symmetric Tree",
+  "diff": "easy",
+  "topics": [
+   "tree",
+   "depth-first-search",
+   "bfs",
+   "binary-tree"
+  ],
+  "sig": {
+   "python": "def isSymmetric(self, root) -> bool:",
+   "javascript": "(none)",
+   "java": "public boolean isSymmetric(TreeNode root) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "root = [1,2,2,3,4,4,3]",
+   "output": "true",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(h)"
+ },
+ {
+  "slug": "top-k-frequent-elements",
+  "title": "Top K Frequent Elements",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "hash-table",
+   "divide-and-conquer",
+   "sorting",
+   "heap",
+   "bucket-sort",
+   "counting"
+  ],
+  "sig": {
+   "python": "def topKFrequent(self, nums: list[int], k: int) -> list[int]:",
+   "javascript": "(none)",
+   "java": "public int[] topKFrequent(int[] nums, int k) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "nums = [1,1,1,2,2,3], k = 2",
+   "output": "[1,2]",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "trapping-rain-water",
+  "title": "Trapping Rain Water",
+  "diff": "hard",
+  "topics": [
+   "array",
+   "two-pointers",
+   "stack",
+   "dynamic-programming"
+  ],
+  "sig": {
+   "python": "def trap(self, height: list[int]) -> int:",
+   "javascript": "(none)",
+   "java": "public int trap(int[] height) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "height = [0,1,0,2,1,0,1,3,2,1,2,1]",
+   "output": "6",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "two-sum",
+  "title": "Two Sum",
+  "diff": "easy",
+  "topics": [
+   "array",
+   "hash-table"
+  ],
+  "sig": {
+   "python": "def twoSum(self, nums: list[int], target: int) -> list[int]:",
+   "javascript": "(none)",
+   "java": "public int[] twoSum(int[] nums, int target) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "nums = [2,7,11,15], target = 9",
+   "output": "[0,1]",
+   "explanation": "Because nums[0] + nums[1] == 9, we return [0, 1]."
+  },
+  "ct": "O(n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "valid-anagram",
+  "title": "Valid Anagram",
+  "diff": "easy",
+  "topics": [
+   "hash-table",
+   "string",
+   "sorting"
+  ],
+  "sig": {
+   "python": "def isAnagram(self, s: str, t: str) -> bool:",
+   "javascript": "(none)",
+   "java": "public boolean isAnagram(String s, String t) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "s = \"anagram\", t = \"nagaram\"",
+   "output": "true",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "valid-parentheses",
+  "title": "Valid Parentheses",
+  "diff": "easy",
+  "topics": [
+   "stack",
+   "string"
+  ],
+  "sig": {
+   "python": "def isValid(self, s: str) -> bool:",
+   "javascript": "(none)",
+   "java": "public boolean isValid(String s) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "s = \"()\"",
+   "output": "true",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(n)"
+ },
+ {
+  "slug": "valid-sudoku",
+  "title": "Valid Sudoku",
+  "diff": "easy",
+  "topics": [
+   "array",
+   "hash-table",
+   "matrix"
+  ],
+  "sig": {
+   "python": "def isValidSudoku(self, board: list[list[str]]) -> bool:",
+   "javascript": "(none)",
+   "java": "public boolean isValidSudoku(char[][] board) {"
+  },
+  "ncases": 2,
+  "example": {
+   "input": "board = [[\"5\",\"3\",\".\",\".\",\"7\",\".\",\".\",\".\",\".\"],[\"6\",\".\",\".\",\"1\",\"9\",\"5\",\".\",\".\",\".\"],[\".\",\"9\",\"8\",\".\",\".\",\".\",\".\",\"6\",\".\"],[\"8\",\".\",\".\",\".\",\"6\",\".\",\".\",\".\",\"3\"],[\"4\",\".\",\".\",\"8\",\".\",\"3\",\".\",\".\",\"1\"],[\"7\",\".\",\".\",\".\",\"2\",\".\",\".\",\".\",\"6\"],[\".\",\"6\",\".\",\".\",\".\",\".\",\"2\",\"8\",\".\"],[\".\",\".\",\".\",\"4\",\"1\",\"9\",\".\",\".\",\"5\"],[\".\",\".\",\".\",\".\",\"8\",\".\",\".\",\"7\",\"9\"]]",
+   "output": "true",
+   "explanation": ""
+  },
+  "ct": "O(1)",
+  "cs": "O(1)"
+ },
+ {
+  "slug": "validate-binary-search-tree",
+  "title": "Validate Binary Search Tree",
+  "diff": "medium",
+  "topics": [
+   "tree",
+   "depth-first-search",
+   "binary-search-tree",
+   "binary-tree"
+  ],
+  "sig": {
+   "python": "def __init__(self, val=0, left=None, right=None):",
+   "javascript": "(none)",
+   "java": "public boolean isValidBST(TreeNode root) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "root = [2,1,3]",
+   "output": "true",
+   "explanation": ""
+  },
+  "ct": "O(n)",
+  "cs": "O(h)"
+ },
+ {
+  "slug": "word-ladder",
+  "title": "Word Ladder",
+  "diff": "hard",
+  "topics": [
+   "hash-table",
+   "string",
+   "bfs"
+  ],
+  "sig": {
+   "python": "def ladderLength(self, beginWord: str, endWord: str, wordList: list[str]) -> int:",
+   "javascript": "(none)",
+   "java": "public int ladderLength(String beginWord, String endWord, List<String> wordList) {"
+  },
+  "ncases": 3,
+  "example": {
+   "input": "beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]",
+   "output": "5",
+   "explanation": "hit -> hot -> dot -> dog -> cog"
+  },
+  "ct": "O(M^2 * N)",
+  "cs": "O(M^2 * N)"
+ },
+ {
+  "slug": "word-search",
+  "title": "Word Search",
+  "diff": "medium",
+  "topics": [
+   "array",
+   "backtracking",
+   "matrix"
+  ],
+  "sig": {
+   "python": "def exist(self, board: list[list[str]], word: str) -> bool:",
+   "javascript": "(none)",
+   "java": "public boolean exist(char[][] board, String word) {"
+  },
+  "ncases": 4,
+  "example": {
+   "input": "board = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], word = \"ABCCED\"",
+   "output": "true",
+   "explanation": ""
+  },
+  "ct": "O(m * n * 4^l)",
+  "cs": "O(l)"
+ }
+]

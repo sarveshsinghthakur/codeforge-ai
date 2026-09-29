@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+*.pyc
+__pycache__/
+*.egg-info/
+*.egg
+
+# Virtual environments
+venv/
+.env
+.env.local
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build outputs
+dist/
+build/
+.next/
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# OS
+Thumbs.db
+ehthumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker
+docker/*.env
