@@ -17,11 +17,11 @@ import os  # noqa: E402
 from pathlib import Path  # noqa: E402
 
 _ENV_PATH = Path(os.environ.get("MISTRAL_ENV_PATH", Path(__file__).resolve().parents[2] / ".env"))
-_env_cache = {"mtime": None, "key": None, "model": None}
+_env_cache = {"mtime": None, "key": None, "model": None, "fallbacks": []}
 
 
 def _reload_env_if_changed() -> bool:
-    """Re-parse MISTRAL_API_KEY/MODEL from .env if it changed. True if reloaded."""
+    """Re-parse MISTRAL_API_KEY/MODEL/FALLBACKS from .env if it changed. True if reloaded."""
     try:
         mtime = _ENV_PATH.stat().st_mtime
     except OSError:
@@ -29,7 +29,7 @@ def _reload_env_if_changed() -> bool:
     if _env_cache["mtime"] == mtime:
         return False
     _env_cache["mtime"] = mtime
-    key, model = "", ""
+    key, model, fallbacks = "", "", ""
     try:
         for line in _ENV_PATH.read_text(encoding="utf-8").splitlines():
             line = line.strip()
@@ -42,10 +42,13 @@ def _reload_env_if_changed() -> bool:
                 key = val
             elif name == "MISTRAL_MODEL":
                 model = val
+            elif name == "MISTRAL_FALLBACK_MODELS":
+                fallbacks = val
     except OSError:
         pass
     _env_cache["key"] = key
     _env_cache["model"] = model
+    _env_cache["fallbacks"] = [m.strip() for m in fallbacks.split(",") if m.strip()]
     return True
 
 
@@ -70,10 +73,19 @@ class MistralService:
         _reload_env_if_changed()
         self._explicit_key = api_key
         self.api_key = api_key or _env_cache["key"] or settings.mistral_api_key
-        self.model = model or _env_cache["model"] or settings.mistral_model or "mistral-large-latest"
+        self.model = model or _env_cache["model"] or settings.mistral_model or "codestral-2508"
+        self.fallback_models = [m for m in _env_cache.get("fallbacks", []) if m != self.model]
         self.base_url = "https://api.mistral.ai/v1"
         self.client: Optional[httpx.AsyncClient] = None
         self._client_key: Optional[str] = None
+
+    def _models_to_try(self) -> list:
+        """Primary model first, then configured fallbacks (deduped)."""
+        out = []
+        for m in [self.model] + list(self.fallback_models):
+            if m and m not in out:
+                out.append(m)
+        return out or [self.model]
 
     def _sync_env(self):
         """Adopt a new .env key without restarting the process."""
@@ -85,6 +97,7 @@ class MistralService:
             self._client_key = None  # force client rebuild with new header
         if _env_cache["model"] and _env_cache["model"] != self.model:
             self.model = _env_cache["model"]
+        self.fallback_models = [m for m in _env_cache.get("fallbacks", []) if m != self.model]
 
     async def _get_client(self) -> httpx.AsyncClient:
         self._sync_env()
@@ -144,44 +157,61 @@ class MistralService:
             retryable=False,
         )
 
-    async def _post_chat(self, payload: dict) -> dict:
+    async def _post_chat(self, payload: dict, allow_fallback: bool = True) -> dict:
         self._require_key()
         client = await self._get_client()
-        try:
-            response = await client.post("/chat/completions", json=payload)
-        except httpx.TimeoutException:
-            raise MistralError(
-                "timeout",
-                "AI request timed out. Please try again.",
-                status_code=504,
-                retryable=True,
-            )
-        except httpx.HTTPError:
-            raise MistralError(
-                "network",
-                "Could not reach the AI service. Check the server's network connection.",
-                status_code=502,
-                retryable=True,
-            )
-        if response.status_code >= 400:
-            raise self._map_status(response.status_code)
-        try:
-            data = response.json()
-        except ValueError:
-            raise MistralError(
-                "invalid_response",
-                "AI service returned an unreadable response.",
-                status_code=502,
-                retryable=True,
-            )
-        if not data.get("choices"):
-            raise MistralError(
-                "empty_response",
-                "AI service returned an empty response. Please try again.",
-                status_code=502,
-                retryable=True,
-            )
-        return data
+        models = self._models_to_try() if allow_fallback else [payload.get("model") or self.model]
+        last_error: Optional[MistralError] = None
+        for i, mdl in enumerate(models):
+            payload = {**payload, "model": mdl}
+            try:
+                response = await client.post("/chat/completions", json=payload)
+            except httpx.TimeoutException:
+                raise MistralError(
+                    "timeout",
+                    "AI request timed out. Please try again.",
+                    status_code=504,
+                    retryable=True,
+                )
+            except httpx.HTTPError:
+                raise MistralError(
+                    "network",
+                    "Could not reach the AI service. Check the server's network connection.",
+                    status_code=502,
+                    retryable=True,
+                )
+            if response.status_code in (403, 429) and i < len(models) - 1:
+                # model unavailable on this tier / rate limited -> try next model
+                last_error = self._map_status(response.status_code)
+                logger.warning("mistral_model_fallback", extra={"model": mdl, "status": response.status_code})
+                continue
+            if response.status_code >= 400:
+                raise self._map_status(response.status_code)
+            try:
+                data = response.json()
+            except ValueError:
+                raise MistralError(
+                    "invalid_response",
+                    "AI service returned an unreadable response.",
+                    status_code=502,
+                    retryable=True,
+                )
+            if not data.get("choices"):
+                raise MistralError(
+                    "empty_response",
+                    "AI service returned an empty response. Please try again.",
+                    status_code=502,
+                    retryable=True,
+                )
+            if mdl != self.model:
+                logger.info("mistral_fallback_used", extra={"model": mdl})
+            return data
+        raise last_error or MistralError(
+            "rate_limit",
+            "AI service is rate limited right now. Wait a moment and try again.",
+            status_code=429,
+            retryable=True,
+        )
 
     async def chat(
         self,
@@ -216,47 +246,66 @@ class MistralService:
         """Yields text deltas from a streaming completion."""
         self._require_key()
         client = await self._get_client()
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "max_tokens": max_tokens,
-            "temperature": temperature,
-            "stream": True,
-        }
-        try:
-            async with client.stream("POST", "/chat/completions", json=payload) as resp:
-                if resp.status_code >= 400:
-                    await resp.aread()
-                    raise self._map_status(resp.status_code)
-                async for line in resp.aiter_lines():
-                    if not line or not line.startswith("data:"):
-                        continue
-                    data = line[len("data:"):].strip()
-                    if data == "[DONE]":
-                        break
-                    try:
-                        chunk = json.loads(data)
-                    except json.JSONDecodeError:
-                        continue
-                    choices = chunk.get("choices") or []
-                    if not choices:
-                        continue
-                    delta = (choices[0].get("delta") or {}).get("content")
-                    if delta:
-                        yield delta
-        except MistralError:
-            raise
-        except httpx.TimeoutException:
-            raise MistralError(
-                "timeout", "AI request timed out. Please try again.", status_code=504, retryable=True
-            )
-        except httpx.HTTPError:
-            raise MistralError(
-                "network",
-                "Could not reach the AI service. Check the server's network connection.",
-                status_code=502,
-                retryable=True,
-            )
+        models = self._models_to_try()
+        last_error: Optional[MistralError] = None
+        for i, mdl in enumerate(models):
+            payload = {
+                "model": mdl,
+                "messages": messages,
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+                "stream": True,
+            }
+            try:
+                async with client.stream("POST", "/chat/completions", json=payload) as resp:
+                    if resp.status_code >= 400:
+                        await resp.aread()
+                        if resp.status_code in (403, 429) and i < len(models) - 1:
+                            last_error = self._map_status(resp.status_code)
+                            logger.warning(
+                                "mistral_model_fallback",
+                                extra={"model": mdl, "status": resp.status_code},
+                            )
+                            continue
+                        raise self._map_status(resp.status_code)
+                    if mdl != self.model:
+                        logger.info("mistral_fallback_used", extra={"model": mdl})
+                    async for line in resp.aiter_lines():
+                        if not line or not line.startswith("data:"):
+                            continue
+                        data = line[len("data:"):].strip()
+                        if data == "[DONE]":
+                            break
+                        try:
+                            chunk = json.loads(data)
+                        except json.JSONDecodeError:
+                            continue
+                        choices = chunk.get("choices") or []
+                        if not choices:
+                            continue
+                        delta = (choices[0].get("delta") or {}).get("content")
+                        if delta:
+                            yield delta
+                    return
+            except MistralError:
+                raise
+            except httpx.TimeoutException:
+                raise MistralError(
+                    "timeout", "AI request timed out. Please try again.", status_code=504, retryable=True
+                )
+            except httpx.HTTPError:
+                raise MistralError(
+                    "network",
+                    "Could not reach the AI service. Check the server's network connection.",
+                    status_code=502,
+                    retryable=True,
+                )
+        raise last_error or MistralError(
+            "rate_limit",
+            "AI service is rate limited right now. Wait a moment and try again.",
+            status_code=429,
+            retryable=True,
+        )
 
     async def generate_text(
         self,

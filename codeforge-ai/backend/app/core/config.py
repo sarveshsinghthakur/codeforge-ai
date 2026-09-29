@@ -25,7 +25,8 @@ class Settings(BaseSettings):
 
     # Mistral
     mistral_api_key: str = ""
-    mistral_model: str = "mistral-small-2603"
+    mistral_model: str = "codestral-2508"
+    mistral_fallback_models: str = "mistral-small-2603,ministral-8b-2512"
 
     # CORS
     cors_origins: str = "http://localhost:3000,http://localhost:8000"
