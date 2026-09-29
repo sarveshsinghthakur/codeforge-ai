@@ -23,6 +23,9 @@ dist/
 logs/
 $RECYCLE.BIN/
 
+# Generated Supabase migration SQL
+codeforge-ai/backend/scripts/sqlout/
+
 # OS
 .DS_Store
 Thumbs.db
