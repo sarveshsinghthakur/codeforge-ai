@@ -20,7 +20,7 @@ services:
       - key: MISTRAL_FALLBACK_MODELS
         value: mistral-small-2603,ministral-8b-2512
       - key: CORS_ORIGINS
-        value: https://codeforge-ai-frontend.onrender.com
+        value: https://codeforge-frontend.onrender.com
       - key: JWT_SECRET
         generateValue: true
       - key: APP_ENV
