@@ -1,11 +1,11 @@
 """Submissions API routes."""
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 from typing import List
 from app.core.database import get_db
 from app.core.security import require_user
-from app.core.exceptions import ProblemNotFound, SubmissionNotFound, Unauthorized
+from app.core.exceptions import ProblemNotFound, SubmissionNotFound, Unauthorized, PaymentRequired
 from app.models.problem import Problem, ProblemStatus
 from app.models.submission import Submission
 from app.models.test_case import TestCase
@@ -14,7 +14,8 @@ from app.models.user_progress import UserProblemProgress
 from app.schemas.submission import (
     SubmissionCreateRequest as SubmissionCreate, SubmissionResult, TestResult, SubmissionListResponse, SubmissionDetailResponse,
 )
-from app.services.code_execution import CodeExecutionService, get_execution_service
+from app.services.code_execution import get_execution_service
+from app.services import access as premium_access
 from app.utils.helpers import parse_json_field
 import json
 from datetime import datetime, timezone
@@ -44,7 +45,18 @@ async def create_submission(
     if not problem:
         raise ProblemNotFound()
 
+    # Medium/Hard problems require an active premium subscription
+    if premium_access.is_locked(problem, premium_access.has_premium(db, current_user)):
+        raise PaymentRequired(
+            f"The '{problem.difficulty}' problem '{problem.title}' requires a premium subscription",
+            details={"title": problem.title, "slug": problem.slug, "difficulty": problem.difficulty},
+        )
+
     is_submit = body.mode == "submit"
+    is_custom = body.mode == "custom"
+
+    if is_custom and not (body.custom_input or "").strip():
+        raise HTTPException(status_code=400, detail="custom_input is required when mode is 'custom'")
 
     submission = None
     if is_submit:
@@ -62,41 +74,52 @@ async def create_submission(
         db.refresh(submission)
         problem.attempt_count += 1
 
-    test_cases = (
-        db.query(TestCase)
-        .filter(TestCase.problem_id == body.problem_id)
-        .order_by(TestCase.order_index)
-        .all()
-    )
+    if is_custom:
+        # single user-provided input; expected output is unknown, so the
+        # endpoint reports completion rather than pass/fail.
+        active_case_dicts = [
+            {"input": body.custom_input, "output": "", "is_public": True}
+        ]
+    else:
+        test_cases = (
+            db.query(TestCase)
+            .filter(TestCase.problem_id == body.problem_id)
+            .order_by(TestCase.order_index)
+            .all()
+        )
 
-    if not test_cases:
-        examples = parse_json_field(problem.examples, [])
-        for i, ex in enumerate(examples):
-            tc = TestCase(
-                problem_id=problem.id,
-                input_data=str(ex.get("input", f"test_{i}")),
-                expected_output=str(ex.get("output", "")),
-                is_public=(i < min(2, len(examples))),
-                order_index=i,
-            )
-            db.add(tc)
-        db.commit()
-        test_cases = db.query(TestCase).filter(TestCase.problem_id == problem.id).all()
-        if submission:
-            submission.total_count = len(test_cases)
+        if not test_cases:
+            examples = parse_json_field(problem.examples, [])
+            for i, ex in enumerate(examples):
+                tc = TestCase(
+                    problem_id=problem.id,
+                    input_data=str(ex.get("input", f"test_{i}")),
+                    expected_output=str(ex.get("output", "")),
+                    is_public=(i < min(2, len(examples))),
+                    order_index=i,
+                )
+                db.add(tc)
+            db.commit()
+            test_cases = db.query(TestCase).filter(TestCase.problem_id == problem.id).all()
+            if submission:
+                submission.total_count = len(test_cases)
 
-    # run mode: public cases only; submit mode: everything (hidden never returned)
-    active_cases = [tc for tc in test_cases if tc.is_public] if not is_submit else test_cases
+        # run mode: public cases only; submit mode: everything (hidden never returned)
+        active_cases = [tc for tc in test_cases if tc.is_public] if not is_submit else test_cases
+        active_case_dicts = [
+            {"input": tc.input_data, "output": tc.expected_output, "is_public": tc.is_public}
+            for tc in active_cases
+        ]
 
     executor = get_execution_service()
     result = await executor.execute(
         code=body.source_code,
         language=body.language,
-        test_cases=[
-            {"input": tc.input_data, "output": tc.expected_output, "is_public": tc.is_public}
-            for tc in active_cases
-        ],
+        test_cases=active_case_dicts,
     )
+
+    if is_custom and result.get("status") in ("accepted", "wrong_answer"):
+        result = {**result, "status": "completed"}
 
     now_iso = datetime.now(timezone.utc).isoformat()
     if is_submit:
@@ -107,7 +130,7 @@ async def create_submission(
         submission.stderr = result.get("stderr")
         submission.error_message = result.get("error_message")
         submission.passed_count = result.get("total_passed", 0)
-        submission.total_count = len(active_cases)
+        submission.total_count = len(active_case_dicts)
         db.commit()
         db.refresh(submission)
         now_iso = submission.created_at.isoformat()

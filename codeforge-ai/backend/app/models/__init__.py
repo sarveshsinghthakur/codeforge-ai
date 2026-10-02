@@ -7,6 +7,7 @@ from app.models.user_progress import UserProblemProgress
 from app.models.discussion import Discussion, Comment
 from app.models.contest import Contest, ContestProblem, ContestParticipant
 from app.models.ai import AIConversation, AIMessage, ProblemGeneration, ProblemGenerationTestCase, AuditLog
+from app.models.subscription import UserSubscription
 
 __all__ = [
     "User",
@@ -24,4 +25,5 @@ __all__ = [
     "ProblemGeneration",
     "ProblemGenerationTestCase",
     "AuditLog",
+    "UserSubscription",
 ]

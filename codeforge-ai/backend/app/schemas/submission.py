@@ -8,9 +8,15 @@ class SubmissionCreateRequest(BaseModel):
     problem_id: int = Field(..., gt=0)
     language: str = Field(..., pattern=r"^(python|javascript|java|cpp|c)$")
     source_code: str = Field(..., min_length=1, max_length=100000)
-    # run  -> public test cases only, not persisted (quick feedback loop)
-    # submit -> all test cases, persisted, affects stats/progress
-    mode: Literal["run", "submit"] = "submit"
+    # run     -> public test cases only, not persisted (quick feedback loop)
+    # submit  -> all test cases, persisted, affects stats/progress
+    # custom  -> a single user-provided input, not persisted
+    mode: Literal["run", "submit", "custom"] = "submit"
+    custom_input: Optional[str] = Field(
+        default=None,
+        max_length=10000,
+        description="Input for mode='custom', in the same format as test-case inputs",
+    )
 
 
 class SubmissionResult(BaseModel):

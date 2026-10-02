@@ -43,6 +43,24 @@ class Settings(BaseSettings):
     rate_limit_ai: int = 20
     rate_limit_generate: int = 5
 
+    # Payments - PayPal (empty credentials => demo mode)
+    paypal_client_id: str = ""
+    paypal_secret: str = ""
+    paypal_mode: str = "sandbox"  # sandbox | live
+
+    # Payments - Paytm (empty credentials => demo mode)
+    paytm_mid: str = ""
+    paytm_key: str = ""  # merchant key used for checksum
+    paytm_website: str = "WEBSTAGING"
+    paytm_mode: str = "sandbox"  # sandbox | live
+    paytm_callback_url: str = ""
+
+    # Plan pricing
+    price_monthly_usd: float = 4.99
+    price_annual_usd: float = 39.99
+    price_monthly_inr: float = 299.0
+    price_annual_inr: float = 2999.0
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]

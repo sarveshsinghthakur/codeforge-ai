@@ -53,3 +53,8 @@ class Conflict(AppException):
 class ValidationError(AppException):
     def __init__(self, message: str, details: dict = None):
         super().__init__(422, "VALIDATION_ERROR", message, details)
+
+
+class PaymentRequired(AppException):
+    def __init__(self, message: str = "Premium subscription required", details: dict = None):
+        super().__init__(402, "PREMIUM_REQUIRED", message, details)

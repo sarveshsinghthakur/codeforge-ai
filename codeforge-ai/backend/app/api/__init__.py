@@ -11,6 +11,7 @@ from app.api.contests import router as contests_router
 from app.api.admin import router as admin_router
 from app.api.analytics import router as analytics_router
 from app.api.dashboard import router as dashboard_router
+from app.api.payments import router as payments_router
 
 __all__ = [
     "auth_router",
@@ -25,4 +26,5 @@ __all__ = [
     "admin_router",
     "analytics_router",
     "dashboard_router",
+    "payments_router",
 ]

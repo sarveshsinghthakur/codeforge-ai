@@ -14,6 +14,7 @@ interface Problem {
   attempt_count: number;
   is_solved?: boolean;
   is_favorite?: boolean;
+  is_locked?: boolean;
 }
 
 export default function Problems() {
@@ -21,6 +22,7 @@ export default function Problems() {
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [filter, setFilter] = useState<string>(searchParams.get('difficulty') || 'all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'solved' | 'unsolved' | 'starred'>('all');
   const [search, setSearch] = useState('');
   const [sortField, setSortField] = useState<string>('id');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -41,7 +43,15 @@ export default function Problems() {
 
   const filteredProblems = problems.filter(p => {
     if (filter !== 'all' && p.difficulty !== filter) return false;
-    if (search && !p.title.toLowerCase().includes(search.toLowerCase())) return false;
+    if (statusFilter === 'solved' && !p.is_solved) return false;
+    if (statusFilter === 'unsolved' && p.is_solved) return false;
+    if (statusFilter === 'starred' && !p.is_favorite) return false;
+    if (search) {
+      const q = search.toLowerCase();
+      const inTitle = p.title.toLowerCase().includes(q);
+      const inTopics = (Array.isArray(p.topics) ? p.topics : []).some(t => t.toLowerCase().includes(q));
+      if (!inTitle && !inTopics) return false;
+    }
     return true;
   }).sort((a, b) => {
     let cmp = 0;
@@ -84,33 +94,76 @@ export default function Problems() {
   };
 
   if (loading) {
-    return <div className="page-loading"><div className="loading-spinner" /></div>;
+    return (
+      <div className="page-container">
+        <div className="problem-list-header"><div><h1>Problems</h1></div></div>
+        <div className="glass-card" style={{ overflow: 'hidden' }}>
+          <table className="problem-table">
+            <thead>
+              <tr><th style={{ width: '60px' }}>#</th><th>Title</th><th style={{ width: '110px' }}>Difficulty</th><th style={{ width: '100px' }}>Acceptance</th><th>Topics</th></tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <tr key={i} className="skeleton-row">
+                  <td><span className="skeleton-bar" style={{ width: '20px' }} /></td>
+                  <td><span className="skeleton-bar" style={{ width: `${40 + (i % 4) * 12}%` }} /></td>
+                  <td><span className="skeleton-bar" style={{ width: '64px' }} /></td>
+                  <td><span className="skeleton-bar" style={{ width: '44px' }} /></td>
+                  <td><span className="skeleton-bar" style={{ width: '70%' }} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
   }
 
   const easyCount = problems.filter(p => p.difficulty === 'easy').length;
   const mediumCount = problems.filter(p => p.difficulty === 'medium').length;
   const hardCount = problems.filter(p => p.difficulty === 'hard').length;
+  const solvedCount = problems.filter(p => p.is_solved).length;
+  const lockedCount = problems.filter(p => p.is_locked).length;
 
   return (
     <div className="page-container">
       <div className="problem-list-header">
         <div>
           <h1>Problems</h1>
-          <div style={{ display: 'flex', gap: '16px', marginTop: '8px', fontSize: '13px', color: 'var(--text-muted)' }}>
+          <div style={{ display: 'flex', gap: '16px', marginTop: '8px', fontSize: '13px', color: 'var(--text-muted)', flexWrap: 'wrap' }}>
             <span><span style={{ color: 'var(--easy)', fontWeight: 600 }}>{easyCount}</span> Easy</span>
             <span><span style={{ color: 'var(--medium)', fontWeight: 600 }}>{mediumCount}</span> Medium</span>
             <span><span style={{ color: 'var(--hard)', fontWeight: 600 }}>{hardCount}</span> Hard</span>
+            <span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: '-1px', marginRight: '4px' }}>
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span style={{ color: 'var(--success)', fontWeight: 600 }}>{solvedCount}</span> Solved
+            </span>
           </div>
         </div>
         <span style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
-          {filteredProblems.length} problems
+          {filteredProblems.length} problem{filteredProblems.length !== 1 ? 's' : ''}
         </span>
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', alignItems: 'center' }}>
+      {lockedCount > 0 && (
+        <div className="paywall-banner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+          </svg>
+          <span>
+            <strong>{lockedCount} problems</strong> (Medium &amp; Hard) are locked. Upgrade to Premium to unlock them all.
+          </span>
+          <Link to="/payment" className="btn btn-primary btn-sm">Upgrade</Link>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
         <input
           type="text"
-          placeholder="Search problems..."
+          placeholder="Search title or topic..."
           value={search}
           onChange={e => setSearch(e.target.value)}
           style={{ flex: 1, maxWidth: '320px' }}
@@ -123,6 +176,17 @@ export default function Problems() {
               onClick={() => handleFilter(d)}
             >
               {d === 'all' ? 'All' : d.charAt(0).toUpperCase() + d.slice(1)}
+            </button>
+          ))}
+        </div>
+        <div className="problem-filters">
+          {(['all', 'unsolved', 'solved', 'starred'] as const).map(s => (
+            <button
+              key={s}
+              className={`filter-btn ${statusFilter === s ? 'active' : ''}`}
+              onClick={() => setStatusFilter(s)}
+            >
+              {s === 'all' ? 'Any Status' : s === 'solved' ? 'Solved' : s === 'unsolved' ? 'Unsolved' : '★ Starred'}
             </button>
           ))}
         </div>
@@ -149,11 +213,24 @@ export default function Problems() {
           </thead>
           <tbody>
             {filteredProblems.map((problem, idx) => (
-              <tr key={problem.id}>
+              <tr key={problem.id} className={problem.is_solved ? 'row-solved' : ''}>
                 <td className="problem-id">{idx + 1}</td>
                 <td>
                   <Link to={`/problems/${problem.slug}`} className="problem-title-link">
+                    {problem.is_solved && (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="solved-check">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    )}
+                    {problem.is_favorite && <span className="star-mark" title="Starred">★</span>}
                     {problem.title}
+                    {problem.is_locked && (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="lock-mark">
+                        <title>Premium — locked</title>
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+                      </svg>
+                    )}
                   </Link>
                 </td>
                 <td>

@@ -18,10 +18,11 @@ from app.api import (
     admin_router,
     analytics_router,
     dashboard_router,
+    payments_router,
 )
 
 # Import all models so Base.metadata knows about them
-from app.models import user, problem, submission, test_case, user_progress, discussion, contest, ai, favorite  # noqa: F401
+from app.models import user, problem, submission, test_case, user_progress, discussion, contest, ai, favorite, subscription  # noqa: F401
 
 app = FastAPI(
     title=settings.project_name,
@@ -54,6 +55,7 @@ app.include_router(contests_router, prefix="/api")
 app.include_router(admin_router, prefix="/api/admin")
 app.include_router(analytics_router, prefix="/api")
 app.include_router(dashboard_router, prefix="/api")
+app.include_router(payments_router, prefix="/api")
 
 
 @app.get("/health")

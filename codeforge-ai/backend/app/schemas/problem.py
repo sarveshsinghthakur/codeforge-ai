@@ -18,6 +18,7 @@ class ProblemListResponse(BaseModel):
     created_at: str
     is_solved: bool = False
     is_favorite: bool = False
+    is_locked: bool = False
 
     class Config:
         from_attributes = True
@@ -70,6 +71,7 @@ class ProblemDetailResponse(BaseModel):
     updated_at: str
     is_solved: bool = False
     is_favorite: bool = False
+    is_locked: bool = False
 
     class Config:
         from_attributes = True

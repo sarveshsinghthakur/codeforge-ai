@@ -20,7 +20,7 @@ export default function Leaderboard() {
 
   useEffect(() => {
     setLoading(true);
-    api.get(`/admin/analytics/leaderboard?period=${period}`).then(res => {
+    api.get(`/analytics/leaderboard?period=${period}`).then(res => {
       setUsers(res.data);
       setLoading(false);
     }).catch(() => setLoading(false));

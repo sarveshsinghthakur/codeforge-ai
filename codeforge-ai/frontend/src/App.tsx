@@ -1,6 +1,8 @@
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect, createContext, useContext } from 'react';
 import { useTheme } from './lib/theme';
+import { ToastProvider } from './components/Toast';
+import api from './lib/api';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -9,6 +11,8 @@ import ProblemDetail from './pages/ProblemDetail';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Leaderboard from './pages/Leaderboard';
+import Payment from './pages/Payment';
+import PaymentVerify from './pages/PaymentVerify';
 import AdminProblemGenerator from './pages/AdminProblemGenerator';
 
 interface AuthContextType {
@@ -27,17 +31,59 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 function Navbar() {
   const location = useLocation();
   const { token, user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [premium, setPremium] = useState(false);
   const isActive = (path: string) => location.pathname === path ? 'active' : '';
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!token) {
+      setPremium(false);
+      return;
+    }
+    api.get('/payments/subscription')
+      .then(res => setPremium(!!res.data?.active))
+      .catch(() => setPremium(false));
+  }, [token, location.pathname]);
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
+
+  const themeIcon = theme === 'dark' ? (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  ) : (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  );
 
   return (
     <nav className="navbar">
@@ -47,44 +93,33 @@ function Navbar() {
         </svg>
         CodeForge
       </Link>
-      <div className="navbar-links">
+      <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
         <Link to="/problems" className={isActive('/problems')}>Problems</Link>
         {token && <Link to="/dashboard" className={isActive('/dashboard')}>Dashboard</Link>}
         {token && <Link to="/leaderboard" className={isActive('/leaderboard')}>Leaderboard</Link>}
-        {token && user?.role === 'ADMIN' && <Link to="/admin/problems/generate" className={isActive('/admin/problems/generate')}>Admin</Link>}
+        <Link to="/payment" className={`${isActive('/payment')} nav-upgrade ${premium ? 'is-pro' : ''}`}>
+          {premium ? 'PRO' : 'Upgrade'}
+        </Link>
+        {token && user?.role === 'ADMIN' && (
+          <Link to="/admin/problems/generate" className={isActive('/admin/problems/generate')}>Admin</Link>
+        )}
       </div>
       <div className="navbar-auth">
+        <button className="btn btn-ghost btn-sm theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+          {themeIcon}
+        </button>
         {token ? (
           <>
-            <button className="btn btn-ghost btn-sm" onClick={toggleTheme} aria-label="Toggle theme" style={{ marginRight: '8px' }}>
-              {theme === 'dark' ? (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="5"/>
-                  <line x1="12" y1="1" x2="12" y2="3"/>
-                  <line x1="12" y1="21" x2="12" y2="23"/>
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                  <line x1="1" y1="12" x2="3" y2="12"/>
-                  <line x1="21" y1="12" x2="23" y2="12"/>
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                </svg>
-              ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                </svg>
-              )}
-            </button>
             <Link to="/profile">
               <button className="btn btn-ghost btn-sm">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                   <circle cx="12" cy="7" r="4"/>
                 </svg>
-                Profile
+                <span className="profile-btn-label">Profile</span>
               </button>
             </Link>
-            <button className="btn btn-ghost btn-sm" onClick={handleLogout}>Logout</button>
+            <button className="btn btn-ghost btn-sm logout-btn" onClick={handleLogout}>Logout</button>
           </>
         ) : (
           <>
@@ -92,6 +127,17 @@ function Navbar() {
             <Link to="/register"><button className="btn btn-primary btn-sm">Sign Up</button></Link>
           </>
         )}
+        <button
+          className="hamburger"
+          aria-label="Toggle menu"
+          onClick={() => setMenuOpen(v => !v)}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {menuOpen
+              ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
+              : <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>}
+          </svg>
+        </button>
       </div>
     </nav>
   );
@@ -120,19 +166,24 @@ function App() {
 
   return (
     <AuthContext.Provider value={{ token, user, login, logout }}>
-      <div className="dot-matrix-bg" />
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/problems" element={<Problems />} />
-        <Route path="/problems/:slug" element={<ProblemDetail />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/admin/problems/generate" element={<AdminProblemGenerator />} />
-      </Routes>
+      <ToastProvider>
+        <ScrollToTop />
+        <div className="dot-matrix-bg" />
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/problems" element={<Problems />} />
+          <Route path="/problems/:slug" element={<ProblemDetail />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/payment/verify" element={<PaymentVerify />} />
+          <Route path="/admin/problems/generate" element={<AdminProblemGenerator />} />
+        </Routes>
+      </ToastProvider>
     </AuthContext.Provider>
   );
 }

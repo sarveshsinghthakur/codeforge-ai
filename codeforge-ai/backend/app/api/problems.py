@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.core.database import get_db
 from app.core.security import get_current_user, require_user, require_admin
-from app.core.exceptions import ProblemNotFound, NotFound, Conflict
+from app.core.exceptions import ProblemNotFound, NotFound, Conflict, PaymentRequired
 from app.models.problem import Problem, ProblemStatus
 from app.models.test_case import TestCase
 from app.models.user import User
@@ -18,6 +18,7 @@ from app.schemas.problem import (
 )
 from app.schemas.submission import SubmissionResult, TestResult as TR
 from app.services.code_execution import CodeExecutionService, get_execution_service
+from app.services import access as premium_access
 from app.services.mistral_service import MistralService, get_mistral_service
 from app.services.quality_checker import ProblemQualityChecker, get_quality_checker
 from app.core.config import settings
@@ -113,6 +114,7 @@ async def list_problems(
     problems = query.offset(offset).limit(params.limit).all()
 
     solved_ids, favorite_ids = _user_flags(db, current_user, [p.id for p in problems])
+    premium = premium_access.has_premium(db, current_user)
 
     return ProblemListEnvelope(
         items=[
@@ -130,6 +132,7 @@ async def list_problems(
                 created_at=p.created_at.isoformat(),
                 is_solved=p.id in solved_ids,
                 is_favorite=p.id in favorite_ids,
+                is_locked=premium_access.is_locked(p, premium),
             )
             for p in problems
         ],
@@ -162,6 +165,7 @@ async def search_problems(
         .all()
     )
     solved_ids, favorite_ids = _user_flags(db, current_user, [p.id for p in problems])
+    premium = premium_access.has_premium(db, current_user)
     return [
         ProblemListResponse(
             id=p.id, public_id=p.public_id, title=p.title, slug=p.slug,
@@ -171,6 +175,7 @@ async def search_problems(
             created_at=p.created_at.isoformat(),
             is_solved=p.id in solved_ids,
             is_favorite=p.id in favorite_ids,
+            is_locked=premium_access.is_locked(p, premium),
         )
         for p in problems
     ]
@@ -207,6 +212,7 @@ async def list_favorites(
         .order_by(UserFavorite.created_at.desc())
         .all()
     )
+    premium = premium_access.has_premium(db, current_user)
     return [
         ProblemListResponse(
             id=p.id, public_id=p.public_id, title=p.title, slug=p.slug,
@@ -215,6 +221,7 @@ async def list_favorites(
             topics=parse_json_field(p.topics, []), company=p.company,
             created_at=p.created_at.isoformat(),
             is_solved=False, is_favorite=True,
+            is_locked=premium_access.is_locked(p, premium),
         )
         for p, _ in rows
     ]
@@ -289,6 +296,18 @@ async def get_problem_by_slug(
 def _problem_to_detail(
     problem: Problem, db: Session, current_user: Optional[User] = None
 ) -> ProblemDetailResponse:
+    # Medium/Hard problems require an active premium subscription
+    premium = premium_access.has_premium(db, current_user)
+    if premium_access.is_locked(problem, premium):
+        raise PaymentRequired(
+            f"The '{problem.difficulty}' problem '{problem.title}' requires a premium subscription",
+            details={
+                "title": problem.title,
+                "slug": problem.slug,
+                "difficulty": problem.difficulty,
+            },
+        )
+
     # only public cases are ever exposed to the workspace UI
     test_cases = (
         db.query(TestCase)
