@@ -29,7 +29,6 @@ services:
       - key: DEBUG
         value: "false"
 
-staticSites:
   - type: static
     name: codeforge-frontend
     repo: https://github.com/sarveshsinghthakur/codeforge-ai
