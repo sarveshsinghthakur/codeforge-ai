@@ -1,11 +1,27 @@
 """Schemas for AI assistant, problem generation, test generation."""
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
 from datetime import datetime
 
 
-class AIChatRequest(BaseModel):
+class _ProblemIdModel(BaseModel):
     problem_id: Optional[int] = None
+
+    @field_validator("problem_id", mode="before")
+    @classmethod
+    def _normalize_problem_id(cls, v):
+        # Missing/invalid ids (null, 0, negative) must become NULL so we never
+        # insert a non-existent problem_id FK (Postgres rejects it, SQLite didn't).
+        if v is None:
+            return None
+        try:
+            iv = int(v)
+        except (TypeError, ValueError):
+            return None
+        return iv if iv > 0 else None
+
+
+class AIChatRequest(_ProblemIdModel):
     code: Optional[str] = None
     language: str = Field(default="python", pattern=r"^(python|javascript|java|cpp|c)$")
     message: str = Field(..., min_length=1, max_length=4000)
@@ -32,9 +48,8 @@ COPILOT_REQUEST_TYPES = (
 )
 
 
-class CopilotRequest(BaseModel):
+class CopilotRequest(_ProblemIdModel):
     request_type: str = Field(default="chat", pattern=r"^(chat|explain_problem|hint|debug|solution|explain_code|complexity|edge_cases|testcases|optimize)$")
-    problem_id: Optional[int] = None
     language: str = Field(default="python", pattern=r"^(python|javascript|java|cpp|c)$")
     code: Optional[str] = Field(None, max_length=100000)
     testcase: Optional[str] = Field(None, max_length=2000)
@@ -53,10 +68,9 @@ class CopilotResponse(BaseModel):
     tokens_used: Optional[int] = None
 
 
-class AIAnalyzeRequest(BaseModel):
+class AIAnalyzeRequest(_ProblemIdModel):
     code: str = Field(..., min_length=1, max_length=100000)
     language: str = Field(default="python", pattern=r"^(python|javascript|java|cpp|c)$")
-    problem_id: Optional[int] = None
     analysis_type: str = Field(
         default="analyze",
         pattern=r"^(analyze|bugs|complexity|optimize|explain|edge_cases|explain_error)$"

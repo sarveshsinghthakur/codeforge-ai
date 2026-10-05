@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.database import engine, Base
+from app.core import unhandled_exception_handler
 from app.api import (
     auth_router,
     users_router,
@@ -38,6 +39,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Always answer unhandled errors as JSON (avoids plain-text 500s the frontend cannot parse).
+app.add_exception_handler(Exception, unhandled_exception_handler)
 
 # Create tables
 Base.metadata.create_all(bind=engine)

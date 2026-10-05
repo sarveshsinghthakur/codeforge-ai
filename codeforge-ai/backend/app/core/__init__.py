@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 import structlog
 
 from app.core.exceptions import AppException
+from app.core.config import settings
 
 logger = structlog.get_logger("codeforge")
 
@@ -49,4 +50,37 @@ async def http_exception_handler(request: Request, exc):
                 "message": exc.detail,
             },
         },
+    )
+
+
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    """Last-resort handler: always answer JSON so clients can show a real message
+    instead of a plain-text 500 body (which frontend fetches cannot parse)."""
+    try:
+        logger.error(
+            "Unhandled exception",
+            error_type=type(exc).__name__,
+            error=str(exc)[:500],
+            path=str(request.url),
+        )
+    except Exception:
+        pass  # logging must never break the 500 response
+    headers = {}
+    origin = request.headers.get("origin")
+    if origin and origin in settings.cors_origins_list:
+        headers = {
+            "Access-Control-Allow-Origin": origin,
+            "Access-Control-Allow-Credentials": "true",
+        }
+    message = "Something went wrong on the server. Please try again."
+    return JSONResponse(
+        status_code=500,
+        content={
+            "success": False,
+            "error": "internal_error",
+            "message": message,
+            "detail": message,
+            "retryable": True,
+        },
+        headers=headers,
     )
