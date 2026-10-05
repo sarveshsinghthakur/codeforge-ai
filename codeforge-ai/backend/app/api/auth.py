@@ -1,16 +1,23 @@
 """Auth API routes."""
+import re
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import get_db
+from app.core.firebase import InvalidFirebaseToken, verify_firebase_id_token
 from app.core.security import (
     get_password_hash, verify_password, create_access_token, create_refresh_token,
     decode_token, get_current_user, require_admin, require_user,
 )
 from app.core.exceptions import Conflict, NotFound, Unauthorized, Forbidden
 from app.models.user import User
-from app.schemas.auth import UserRegisterRequest as UserRegister, UserLoginRequest as UserLogin, TokenResponse, UserResponse, UserUpdateRequest as UserUpdate, ProfileResponse
+from app.schemas.auth import (
+    UserRegisterRequest as UserRegister, UserLoginRequest as UserLogin, TokenResponse,
+    UserResponse, UserUpdateRequest as UserUpdate, ProfileResponse,
+    GoogleLoginRequest, GoogleLoginResponse,
+)
 from app.models.user_progress import UserProblemProgress
 from app.models.submission import Submission
 from app.models.problem import Problem
@@ -54,7 +61,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     if not user:
         user = db.query(User).filter(User.email == form_data.username).first()
 
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    if not user or not user.hashed_password or not verify_password(form_data.password, user.hashed_password):
         raise Unauthorized("Invalid credentials")
 
     if not user.is_active:
@@ -68,6 +75,95 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
         refresh_token=refresh_token,
         token_type="bearer",
         expires_in=settings.jwt_access_token_expire_minutes * 60,
+    )
+
+
+def _user_response(user: User) -> UserResponse:
+    return UserResponse(
+        id=user.id,
+        public_id=user.public_id,
+        username=user.username,
+        email=user.email,
+        display_name=user.display_name,
+        avatar_url=user.avatar_url,
+        bio=user.bio,
+        role=user.role,
+        is_active=user.is_active,
+        preferred_language=user.preferred_language,
+        created_at=user.created_at.isoformat(),
+    )
+
+
+def _token_response(user: User) -> TokenResponse:
+    return TokenResponse(
+        access_token=create_access_token({"sub": str(user.id)}),
+        refresh_token=create_refresh_token({"sub": str(user.id)}),
+        token_type="bearer",
+        expires_in=settings.jwt_access_token_expire_minutes * 60,
+    )
+
+
+def _unique_username(db: Session, base: str) -> str:
+    base = re.sub(r"[^a-z0-9_]", "", base.lower()) or "user"
+    base = base[:40]
+    username = base
+    counter = 1
+    while db.query(User).filter(User.username == username).first():
+        counter += 1
+        username = f"{base}{counter}"[:50]
+    return username
+
+
+@router.post("/auth/google", response_model=GoogleLoginResponse)
+async def google_login(body: GoogleLoginRequest, db: Session = Depends(get_db)):
+    try:
+        claims = verify_firebase_id_token(body.credential)
+    except InvalidFirebaseToken:
+        raise Unauthorized("Invalid Google credential")
+
+    email = (claims.get("email") or "").strip().lower()
+    if not email:
+        raise Unauthorized("Google account has no email address")
+    if not claims.get("email_verified", False):
+        raise Unauthorized("Google email is not verified")
+
+    user = db.query(User).filter(User.email == email).first()
+
+    if user is None:
+        source = claims.get("name") or email.split("@")[0]
+        username = _unique_username(db, source)
+        user = User(
+            username=username,
+            email=email,
+            hashed_password=None,
+            display_name=(claims.get("name") or username)[:100],
+            avatar_url=claims["picture"][:500] if claims.get("picture") else None,
+            role="USER",
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    else:
+        if not user.is_active:
+            raise Forbidden("Account is deactivated")
+        changed = False
+        if not user.display_name and claims.get("name"):
+            user.display_name = claims["name"][:100]
+            changed = True
+        if not user.avatar_url and claims.get("picture"):
+            user.avatar_url = claims["picture"][:500]
+            changed = True
+        if changed:
+            db.commit()
+            db.refresh(user)
+
+    token = _token_response(user)
+    return GoogleLoginResponse(
+        access_token=token.access_token,
+        refresh_token=token.refresh_token,
+        token_type=token.token_type,
+        expires_in=token.expires_in,
+        user=_user_response(user),
     )
 
 

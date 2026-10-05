@@ -23,6 +23,10 @@ class UserRefreshRequest(BaseModel):
     refresh_token: str
 
 
+class GoogleLoginRequest(BaseModel):
+    credential: str = Field(..., min_length=20, max_length=4096)
+
+
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
@@ -61,3 +65,7 @@ class ProfileResponse(UserResponse):
     hard_solved: int = 0
     submission_count: int = 0
     acceptance_rate: float = 0.0
+
+
+class GoogleLoginResponse(TokenResponse):
+    user: UserResponse

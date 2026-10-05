@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     # CORS
     cors_origins: str = "http://localhost:3000,http://localhost:8000"
 
+    # Firebase (Google sign-in)
+    firebase_project_id: str = "composio-6aee9"
+
     # Code Execution
     code_execution_timeout: int = 10
     code_execution_memory_limit: int = 256

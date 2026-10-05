@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
 import api from '../lib/api';
+import { signInWithGoogle } from '../lib/firebase';
 
 function GoogleIcon() {
   return (
@@ -21,6 +22,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -55,27 +57,27 @@ export default function Register() {
   };
 
   const handleGoogleRegister = async () => {
+    setError('');
+    setGoogleLoading(true);
     try {
-      if ((window as any).google) {
-        (window as any).google.accounts.id.initialize({
-          client_id: 'YOUR_GOOGLE_CLIENT_ID',
-          callback: async (response: any) => {
-            try {
-              const res = await api.post('/auth/google', { credential: response.credential });
-              login(res.data.access_token, res.data.user);
-              navigate('/problems');
-            } catch {
-              setError('Google sign-in failed. Please try again.');
-            }
-          },
-        });
-        (window as any).google.accounts.id.prompt();
+      const idToken = await signInWithGoogle();
+      const res = await api.post('/auth/google', { credential: idToken });
+      login(res.data.access_token, res.data.user);
+      navigate('/problems');
+    } catch (err: any) {
+      const code = err?.code;
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        // user dismissed the popup — no error needed
       } else {
-        setError('Google Sign-In is not available. Please use email/password.');
+        const detail = err?.response?.data?.detail;
+        if (detail && typeof detail === 'object') {
+          setError(detail.message || 'Google sign-in failed. Please try again.');
+        } else {
+          setError(detail || err?.message || 'Google sign-in failed. Please try again.');
+        }
       }
-    } catch {
-      setError('Google sign-in failed.');
     }
+    setGoogleLoading(false);
   };
 
   return (
@@ -84,9 +86,9 @@ export default function Register() {
         <h2>Create account</h2>
         <p>Start your coding journey today</p>
 
-        <button className="btn-google" onClick={handleGoogleRegister} type="button">
+        <button className="btn-google" onClick={handleGoogleRegister} type="button" disabled={googleLoading}>
           <GoogleIcon />
-          Continue with Google
+          {googleLoading ? 'Opening Google...' : 'Continue with Google'}
         </button>
 
         <div className="auth-divider">or</div>
