@@ -141,6 +141,9 @@ async def create_submission(
             if total_subs > 0:
                 problem.acceptance_rate = round(problem.solved_count / total_subs * 100, 1)
 
+        # progress row: created on accepted always, or on any submit that flushes solve time
+        flush_time = body.time_spent or 0
+        if result["status"] == "accepted" or flush_time > 0:
             progress = db.query(UserProblemProgress).filter(
                 UserProblemProgress.user_id == current_user.id,
                 UserProblemProgress.problem_id == problem.id,
@@ -150,13 +153,17 @@ async def create_submission(
 
             if not progress:
                 progress = UserProblemProgress(
-                    user_id=current_user.id, problem_id=problem.id, solved=True,
-                    attempt_count=1, solved_at=datetime.now(timezone.utc),
+                    user_id=current_user.id, problem_id=problem.id, solved=False,
+                    attempt_count=0, solved_at=None,
                     last_attempt_at=datetime.now(timezone.utc), last_language=body.language,
-                    current_streak_day=today,
+                    current_streak_day=today, time_spent_seconds=0,
                 )
                 db.add(progress)
-            else:
+
+            if flush_time > 0:
+                progress.time_spent_seconds = (progress.time_spent_seconds or 0) + flush_time
+
+            if result["status"] == "accepted":
                 if not progress.solved:
                     progress.solved = True
                     progress.solved_at = datetime.now(timezone.utc)

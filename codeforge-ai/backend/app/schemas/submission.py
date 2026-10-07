@@ -17,6 +17,12 @@ class SubmissionCreateRequest(BaseModel):
         max_length=10000,
         description="Input for mode='custom', in the same format as test-case inputs",
     )
+    time_spent: Optional[int] = Field(
+        default=None,
+        ge=0,
+        le=86400,
+        description="Seconds spent solving this problem in the current session; flushed on submit",
+    )
 
 
 class SubmissionResult(BaseModel):

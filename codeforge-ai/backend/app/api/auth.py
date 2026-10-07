@@ -220,7 +220,8 @@ async def update_current_user(body: UserUpdate, current_user: User = Depends(req
     if body.display_name is not None:
         current_user.display_name = body.display_name
     if body.avatar_url is not None:
-        current_user.avatar_url = body.avatar_url
+        # "" = explicit clear; anything else stored as-is
+        current_user.avatar_url = body.avatar_url or None
     if body.bio is not None:
         current_user.bio = body.bio
     if body.preferred_language is not None:

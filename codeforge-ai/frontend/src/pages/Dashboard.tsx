@@ -18,6 +18,7 @@ interface DashboardData {
     longest_streak: number;
     total_problems_attempted: number;
     favorites_count: number;
+    time_spent_seconds: number;
   };
   activity_calendar: { date: string; count: number }[];
   topic_progress: { topic: string; solved: number; attempted: number; percentage: number }[];
@@ -39,6 +40,58 @@ function daysAgoISO(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() - days);
   return d.toISOString().slice(0, 10);
+}
+
+function fmtDuration(totalSeconds: number): string {
+  const s = Math.max(0, totalSeconds || 0);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m`;
+  return `${s}s`;
+}
+
+function MonthlyChart({ calendar }: { calendar: { date: string; count: number }[] }) {
+  const now = new Date();
+  const months: { key: string; label: string; total: number }[] = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const label = d.toLocaleString('en', { month: 'short' }) + (d.getMonth() === 0 ? ` '${String(d.getFullYear()).slice(2)}` : '');
+    months.push({ key, label, total: 0 });
+  }
+  const byKey = new Map(months.map(m => [m.key, m]));
+  for (const p of calendar || []) {
+    const m = byKey.get(p.date.slice(0, 7));
+    if (m) m.total += p.count;
+  }
+  const max = Math.max(1, ...months.map(m => m.total));
+  const grand = months.reduce((a, m) => a + m.total, 0);
+
+  if (grand === 0) {
+    return <p className="muted-note">No activity yet — monthly graph fills in as you submit.</p>;
+  }
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', height: '140px', marginTop: '4px' }}>
+        {months.map(m => {
+          const pct = Math.round((m.total / max) * 100);
+          return (
+            <div key={m.key} title={`${m.label}: ${m.total} submission${m.total === 1 ? '' : 's'}`}
+              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', height: '100%', justifyContent: 'flex-end', minWidth: 0 }}>
+              <span style={{ fontSize: '10px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>{m.total || ''}</span>
+              <div style={{ width: '100%', maxWidth: '34px', height: `${Math.max(m.total > 0 ? 4 : 1, pct)}%`, borderRadius: '4px 4px 2px 2px', background: m.total > 0 ? 'linear-gradient(180deg, var(--accent, #6366f1), rgba(99,102,241,0.45))' : 'rgba(255,255,255,0.06)', transition: 'height 0.3s' }} />
+              <span style={{ fontSize: '10px', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{m.label}</span>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ marginTop: '10px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+        {grand} submission{grand === 1 ? '' : 's'} in the last 12 months · busiest {months.reduce((a, b) => (b.total > a.total ? b : a)).label}
+      </div>
+    </div>
+  );
 }
 
 function Heatmap({ calendar }: { calendar: { date: string; count: number }[] }) {
@@ -183,6 +236,11 @@ export default function Dashboard() {
           <div className="value">{stats?.current_streak || 0}<span style={{ fontSize: '16px', fontWeight: 600 }}>d</span></div>
           <div className="sub">best {stats?.longest_streak || 0} days</div>
         </div>
+        <div className="dashboard-card">
+          <div className="label">Time Coded</div>
+          <div className="value">{fmtDuration(stats?.time_spent_seconds || 0)}</div>
+          <div className="sub">solve time flushed on submit</div>
+        </div>
       </div>
 
       <div className="glass-card dashboard-section">
@@ -208,6 +266,11 @@ export default function Dashboard() {
       <div className="glass-card dashboard-section">
         <div className="section-title">Activity — last 12 months</div>
         <Heatmap calendar={data?.activity_calendar || []} />
+      </div>
+
+      <div className="glass-card dashboard-section">
+        <div className="section-title">Activity by Month</div>
+        <MonthlyChart calendar={data?.activity_calendar || []} />
       </div>
 
       <div className="dashboard-two-col">

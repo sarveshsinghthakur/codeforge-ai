@@ -53,7 +53,7 @@ class UserResponse(BaseModel):
 
 class UserUpdateRequest(BaseModel):
     display_name: Optional[str] = Field(None, max_length=100)
-    avatar_url: Optional[str] = Field(None, max_length=500)
+    avatar_url: Optional[str] = Field(None, max_length=16000)
     bio: Optional[str] = Field(None, max_length=500)
     preferred_language: Optional[str] = Field(None, pattern=r"^(python|javascript|java|cpp|c)$")
 

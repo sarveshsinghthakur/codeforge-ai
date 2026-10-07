@@ -163,6 +163,7 @@ class DashboardStats(BaseModel):
     longest_streak: int = 0
     total_problems_attempted: int = 0
     favorites_count: int = 0
+    time_spent_seconds: int = 0
 
 
 class ActivityPoint(BaseModel):

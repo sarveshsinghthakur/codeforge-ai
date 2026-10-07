@@ -20,6 +20,7 @@ interface AuthContextType {
   user: any;
   login: (token: string, user: any) => void;
   logout: () => void;
+  updateUser: (user: any) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -27,6 +28,7 @@ export const AuthContext = createContext<AuthContextType>({
   user: null,
   login: () => {},
   logout: () => {},
+  updateUser: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -112,10 +114,14 @@ function Navbar() {
           <>
             <Link to="/profile">
               <button className="btn btn-ghost btn-sm">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
-                </svg>
+                {user?.avatar_url ? (
+                  <img src={user.avatar_url} alt="" style={{ width: 18, height: 18, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                )}
                 <span className="profile-btn-label">Profile</span>
               </button>
             </Link>
@@ -164,8 +170,13 @@ function App() {
     localStorage.removeItem('user');
   };
 
+  const updateUser = (u: any) => {
+    setUser(u);
+    localStorage.setItem('user', JSON.stringify(u));
+  };
+
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, login, logout, updateUser }}>
       <ToastProvider>
         <ScrollToTop />
         <div className="dot-matrix-bg" />

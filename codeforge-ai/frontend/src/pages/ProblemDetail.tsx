@@ -127,6 +127,21 @@ export default function ProblemDetail() {
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [related, setRelated] = useState<any[]>([]);
 
+  // solve session timer — flushed to backend on submit (time_spent)
+  const [elapsed, setElapsed] = useState(0);
+  const [timerRunning, setTimerRunning] = useState(true);
+
+  useEffect(() => {
+    setElapsed(0);
+    setTimerRunning(true);
+  }, [slug]);
+
+  useEffect(() => {
+    if (!timerRunning || !problem) return;
+    const t = setInterval(() => setElapsed(e => e + 1), 1000);
+    return () => clearInterval(t);
+  }, [timerRunning, problem]);
+
   const copilot = useCopilot({
     problemId: problem?.id ?? null,
     language,
@@ -277,12 +292,18 @@ export default function ProblemDetail() {
         payload.custom_input = customInput;
         localStorage.setItem(customInputKey(slug), customInput);
       }
+      if (mode === 'submit') {
+        payload.time_spent = elapsed;
+      }
       const res = await api.post('/submissions', payload);
       const data = { ...res.data, mode };
       setOutput(data);
       setLastRunResult(data);
-      if (mode === 'submit' && leftTab !== 'submissions') {
-        api.get(`/problems/slug/${slug}/submissions`).then(r => setSubmissions(r.data));
+      if (mode === 'submit') {
+        setElapsed(0); // session time flushed to backend
+        if (leftTab !== 'submissions') {
+          api.get(`/problems/slug/${slug}/submissions`).then(r => setSubmissions(r.data));
+        }
       }
     } catch (err: any) {
       const detail = err.response?.data?.detail;
@@ -659,6 +680,18 @@ export default function ProblemDetail() {
             )}
           </div>
           <div className="editor-actions">
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => setTimerRunning(r => !r)}
+              title={timerRunning ? 'Pause solve timer' : 'Resume solve timer'}
+              style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', minWidth: '64px' }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>
+              </svg>
+              {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')}
+              {timerRunning ? ' ‖' : ' ▶'}
+            </button>
             <div className="font-size-stepper">
               <span>Font</span>
               <button className="btn btn-ghost btn-sm" onClick={() => handleFontSizeChange(-1)} aria-label="Decrease font size">−</button>

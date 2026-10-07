@@ -168,6 +168,7 @@ async def get_dashboard(
     favorites_count = db.query(UserFavorite).filter(
         UserFavorite.user_id == current_user.id
     ).count()
+    time_spent_seconds = sum((p.time_spent_seconds or 0) for p in progress_list)
 
     return DashboardResponse(
         stats=DashboardStats(
@@ -180,6 +181,7 @@ async def get_dashboard(
             current_streak=current_streak, longest_streak=longest_streak,
             total_problems_attempted=attempt_count,
             favorites_count=favorites_count,
+            time_spent_seconds=time_spent_seconds,
         ),
         activity_calendar=activity_calendar,
         topic_progress=topic_list,
