@@ -11,6 +11,7 @@ import { useTheme } from '../lib/theme';
 import { analyzeTemplate, assembleCode, extractDraftBody, TemplateInfo } from '../lib/templates';
 import { useAuth } from '../App';
 import { useToast } from '../components/Toast';
+import { storageUserKey } from '../lib/userScope';
 import AIChat from '../components/ai/AIChat';
 import AIPanel from '../components/ai/AIPanel';
 import Markdown from '../components/ai/Markdown';
@@ -18,6 +19,10 @@ import Discussions from '../components/Discussions';
 
 const LANG_MAP: Record<string, any> = { python: python(), javascript: javascript(), java: java() };
 const LANG_LABELS: Record<string, string> = { python: 'Python 3', javascript: 'JavaScript', java: 'Java' };
+
+// Per-user localStorage scope: drafts/custom input never leak across accounts.
+const draftKey = (slug: string | undefined, lang: string) => `draft:${storageUserKey()}:${slug}:${lang}`;
+const customInputKey = (slug: string | undefined) => `customInput:${storageUserKey()}:${slug}`;
 
 const STATUS_META: Record<string, { label: string; cls: 'ok' | 'fail' | 'warn' }> = {
   accepted: { label: 'Accepted', cls: 'ok' },
@@ -142,7 +147,7 @@ export default function ProblemDetail() {
     const sc = parseJSON(p.starter_code);
     const raw = typeof sc[lang] === 'string' ? sc[lang] : '';
     const info = analyzeTemplate(raw, lang);
-    const draft = localStorage.getItem(`draft:${slug}:${lang}`);
+    const draft = localStorage.getItem(draftKey(slug, lang));
     setTemplate(info);
     setCode(draft ? extractDraftBody(draft, info) : info.body);
     setSavedAt(draft ? Date.now() : null);
@@ -198,13 +203,13 @@ export default function ProblemDetail() {
 
   // custom input draft
   useEffect(() => {
-    setCustomInput(localStorage.getItem(`customInput:${slug}`) || '');
+    setCustomInput(localStorage.getItem(customInputKey(slug)) || '');
   }, [slug]);
 
   // auto-save the coding block draft
   useEffect(() => {
     if (!template || !slug) return;
-    const key = `draft:${slug}:${language}`;
+    const key = draftKey(slug, language);
     const pristine = code === template.body;
     if (pristine && localStorage.getItem(key) === null) return; // nothing to save yet
     localStorage.setItem(key, code);
@@ -243,7 +248,7 @@ export default function ProblemDetail() {
 
   const handleResetCode = () => {
     if (!template) return;
-    localStorage.removeItem(`draft:${slug}:${language}`);
+    localStorage.removeItem(draftKey(slug, language));
     setCode(template.body);
     setSavedAt(null);
   };
@@ -270,7 +275,7 @@ export default function ProblemDetail() {
       };
       if (mode === 'custom') {
         payload.custom_input = customInput;
-        localStorage.setItem(`customInput:${slug}`, customInput);
+        localStorage.setItem(customInputKey(slug), customInput);
       }
       const res = await api.post('/submissions', payload);
       const data = { ...res.data, mode };
@@ -776,7 +781,7 @@ export default function ProblemDetail() {
                 <button className="btn btn-secondary btn-sm" onClick={() => runCode('custom')} disabled={running || !customInput.trim()}>
                   {running ? 'Running...' : 'Run custom test'}
                 </button>
-                <button className="btn btn-ghost btn-sm" onClick={() => { setCustomInput(''); localStorage.removeItem(`customInput:${slug}`); }}>
+                <button className="btn btn-ghost btn-sm" onClick={() => { setCustomInput(''); localStorage.removeItem(customInputKey(slug)); }}>
                   Clear
                 </button>
               </div>

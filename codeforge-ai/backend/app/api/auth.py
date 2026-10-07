@@ -16,11 +16,12 @@ from app.models.user import User
 from app.schemas.auth import (
     UserRegisterRequest as UserRegister, UserLoginRequest as UserLogin, TokenResponse,
     UserResponse, UserUpdateRequest as UserUpdate, ProfileResponse,
-    GoogleLoginRequest, GoogleLoginResponse,
+    GoogleLoginRequest, GoogleLoginResponse, SubscriptionBrief, AiChatsBrief,
 )
 from app.models.user_progress import UserProblemProgress
 from app.models.submission import Submission
 from app.models.problem import Problem
+from app.models.ai import AIConversation, AIMessage
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
@@ -272,6 +273,28 @@ async def get_my_dashboard(current_user: User = Depends(require_user), db: Sessi
         Problem.difficulty == "hard",
     ).count()
 
+    # per-user subscription summary (fresh users have no row → plan "free")
+    from app.api.payments import _status_for
+    sub = _status_for(db, current_user)
+    if sub.plan is None:
+        sub.plan = "admin" if sub.is_admin else "free"
+    subscription = SubscriptionBrief(
+        active=sub.active,
+        plan=sub.plan,
+        status=sub.status or "free",
+        expires_at=sub.expires_at,
+        days_left=sub.days_left,
+        is_admin=sub.is_admin,
+    )
+
+    # per-user AI usage summary (fresh users → zeros)
+    ai_conversations = db.query(AIConversation).filter(
+        AIConversation.user_id == current_user.id,
+    ).count()
+    ai_messages = db.query(AIMessage).join(
+        AIConversation, AIMessage.conversation_id == AIConversation.id
+    ).filter(AIConversation.user_id == current_user.id).count()
+
     return ProfileResponse(
         id=current_user.id,
         public_id=current_user.public_id,
@@ -290,4 +313,6 @@ async def get_my_dashboard(current_user: User = Depends(require_user), db: Sessi
         hard_solved=hard_solved,
         submission_count=total,
         acceptance_rate=round(acceptance_rate, 1),
+        subscription=subscription,
+        ai_chats=AiChatsBrief(conversations=ai_conversations, messages=ai_messages),
     )

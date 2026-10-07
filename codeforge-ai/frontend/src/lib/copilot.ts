@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { storageUserKey } from './userScope';
 
 // Same base as lib/api.ts: VITE_API_URL on Vercel (backend origin, CORS-enabled),
 // '/api' only for local dev where vite proxies to localhost:8000. Never same-origin
@@ -64,8 +65,10 @@ interface CopilotOptions {
 
 const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 
+// Per-user scope: a new signed-in account never inherits another account's
+// cached chat history or conversation id from this browser.
 const storageKey = (problemId: number | null, kind: 'msgs' | 'conv') =>
-  `copilot:${kind}:${problemId ?? 'none'}`;
+  `copilot:${kind}:${storageUserKey()}:${problemId ?? 'none'}`;
 
 function loadMessages(problemId: number | null): CopilotMessage[] {
   try {

@@ -58,6 +58,22 @@ class UserUpdateRequest(BaseModel):
     preferred_language: Optional[str] = Field(None, pattern=r"^(python|javascript|java|cpp|c)$")
 
 
+class SubscriptionBrief(BaseModel):
+    """Per-user subscription summary; fresh users default to plan 'free'."""
+    active: bool = False
+    plan: str = "free"        # free | admin | monthly | annual
+    status: str = "free"      # free | pending | active | failed | expired
+    expires_at: Optional[str] = None
+    days_left: Optional[int] = None
+    is_admin: bool = False
+
+
+class AiChatsBrief(BaseModel):
+    """Per-user AI usage summary; fresh users default to zeros."""
+    conversations: int = 0
+    messages: int = 0
+
+
 class ProfileResponse(UserResponse):
     problems_solved: int = 0
     easy_solved: int = 0
@@ -65,6 +81,8 @@ class ProfileResponse(UserResponse):
     hard_solved: int = 0
     submission_count: int = 0
     acceptance_rate: float = 0.0
+    subscription: SubscriptionBrief = Field(default_factory=SubscriptionBrief)
+    ai_chats: AiChatsBrief = Field(default_factory=AiChatsBrief)
 
 
 class GoogleLoginResponse(TokenResponse):

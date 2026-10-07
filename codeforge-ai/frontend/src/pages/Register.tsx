@@ -40,7 +40,14 @@ export default function Register() {
     setLoading(true);
     try {
       const res = await api.post('/auth/register', { username, email, password });
-      login(res.data.access_token, { username });
+      const accessToken = res.data.access_token;
+      // fetch the full user (id, role, ...) so profile stats and admin UI work;
+      // drop any stale token first so the request interceptor can't override it
+      localStorage.removeItem('token');
+      const me = await api.get('/auth/me', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }).catch(() => null);
+      login(accessToken, me?.data ?? { username });
       navigate('/problems');
     } catch (err: any) {
       const data = err.response?.data;
