@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const API_BASE = '/api';
+// Same base as lib/api.ts: VITE_API_URL on Vercel (backend origin, CORS-enabled),
+// '/api' only for local dev where vite proxies to localhost:8000. Never same-origin
+// in production — the SPA rewrite would answer index.html/405 instead of the API.
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 export interface QuickAction {
   id: string;
