@@ -22,6 +22,7 @@ from app.core.security import require_user
 from app.models.ai import AIConversation, AIMessage
 from app.models.problem import Problem, ProblemStatus
 from app.models.user import User
+from app.core.prompts import TERSE_STYLE
 from app.schemas.ai import CopilotRequest, CopilotResponse
 from app.services.mistral_service import MistralError, get_mistral_service
 
@@ -49,6 +50,7 @@ SYSTEM_PROMPT = (
     "- For hint requests: give exactly ONE hint at the requested level and never the full solution "
     "unless the request type is 'solution'.\n"
     "- If the user's code is provided, ground every answer in that code.\n"
+    + TERSE_STYLE
 )
 
 

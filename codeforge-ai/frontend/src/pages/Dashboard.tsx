@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
 import api from '../lib/api';
 
@@ -101,6 +101,16 @@ export default function Dashboard() {
   const { token, user } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const surpriseMe = async () => {
+    try {
+      const res = await api.get('/problems/random');
+      navigate(`/problems/${res.data.slug}`);
+    } catch {
+      // backend down — stay put
+    }
+  };
 
   useEffect(() => {
     if (!token) return;
@@ -255,6 +265,7 @@ export default function Dashboard() {
           <Link to="/problems?difficulty=easy"><button className="btn btn-secondary">Practice Easy</button></Link>
           <Link to="/problems?difficulty=medium"><button className="btn btn-secondary">Challenge Medium</button></Link>
           <Link to="/problems?difficulty=hard"><button className="btn btn-secondary">Tackle Hard</button></Link>
+          <button className="btn btn-secondary" onClick={surpriseMe}>Random Problem</button>
           <Link to="/leaderboard"><button className="btn btn-secondary">Leaderboard</button></Link>
         </div>
       </div>

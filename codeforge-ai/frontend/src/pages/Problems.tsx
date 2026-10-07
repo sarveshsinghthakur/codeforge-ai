@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../lib/api';
 
 interface Problem {
@@ -21,6 +21,7 @@ export default function Problems() {
   const [problems, setProblems] = useState<Problem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [filter, setFilter] = useState<string>(searchParams.get('difficulty') || 'all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'solved' | 'unsolved' | 'starred'>('all');
   const [search, setSearch] = useState('');
@@ -74,6 +75,15 @@ export default function Problems() {
     } else {
       setSortField(field);
       setSortOrder('asc');
+    }
+  };
+
+  const surpriseMe = async () => {
+    try {
+      const res = await api.get('/problems/random');
+      navigate(`/problems/${res.data.slug}`);
+    } catch {
+      // backend down — stay put
     }
   };
 
@@ -190,6 +200,9 @@ export default function Problems() {
             </button>
           ))}
         </div>
+        <button className="btn btn-secondary btn-sm" onClick={surpriseMe} style={{ marginLeft: 'auto' }} title="Open a random problem">
+          Surprise me
+        </button>
       </div>
 
       <div className="glass-card" style={{ overflow: 'hidden' }}>

@@ -24,6 +24,7 @@ from app.services.quality_checker import ProblemQualityChecker, get_quality_chec
 from app.core.config import settings
 from app.utils.helpers import slugify, format_json_field, parse_json_field
 import json
+import hashlib
 from datetime import datetime, timezone
 
 router = APIRouter()
@@ -140,6 +141,65 @@ async def list_problems(
         page=params.page,
         limit=params.limit,
     )
+
+
+def _list_item(db: Session, user: Optional[User], p: Problem) -> ProblemListResponse:
+    solved_ids, favorite_ids = _user_flags(db, user, [p.id])
+    premium = premium_access.has_premium(db, user)
+    return ProblemListResponse(
+        id=p.id,
+        public_id=p.public_id,
+        title=p.title,
+        slug=p.slug,
+        difficulty=p.difficulty,
+        acceptance_rate=round(p.acceptance_rate, 1),
+        solved_count=p.solved_count,
+        attempt_count=p.attempt_count,
+        topics=parse_json_field(p.topics, []),
+        company=p.company,
+        created_at=p.created_at.isoformat(),
+        is_solved=p.id in solved_ids,
+        is_favorite=p.id in favorite_ids,
+        is_locked=premium_access.is_locked(p, premium),
+    )
+
+
+@router.get("/problems/daily", response_model=ProblemListResponse)
+async def daily_problem(
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user),
+):
+    """Same problem for every user all day — deterministic pick from date."""
+    rows = (
+        db.query(Problem.id)
+        .filter(Problem.status == ProblemStatus.PUBLISHED.value)
+        .order_by(Problem.id.asc())
+        .all()
+    )
+    if not rows:
+        raise ProblemNotFound()
+    day = datetime.now(timezone.utc).date().isoformat()
+    idx = int(hashlib.sha256(day.encode()).hexdigest(), 16) % len(rows)
+    problem = db.query(Problem).filter(Problem.id == rows[idx][0]).first()
+    if problem is None:
+        raise ProblemNotFound()
+    return _list_item(db, current_user, problem)
+
+
+@router.get("/problems/random", response_model=ProblemListResponse)
+async def random_problem(
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user),
+):
+    problem = (
+        db.query(Problem)
+        .filter(Problem.status == ProblemStatus.PUBLISHED.value)
+        .order_by(func.random())
+        .first()
+    )
+    if problem is None:
+        raise ProblemNotFound()
+    return _list_item(db, current_user, problem)
 
 
 @router.get("/problems/search", response_model=List[ProblemListResponse])

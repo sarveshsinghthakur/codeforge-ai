@@ -7,6 +7,7 @@ from app.core.database import get_db
 from app.core.security import require_user, require_admin
 from app.core.config import settings
 from app.core.exceptions import ProblemNotFound, NotFound
+from app.core.prompts import TERSE_STYLE
 from app.models.problem import Problem, ProblemStatus
 from app.models.user import User
 from app.models.ai import AIConversation, AIMessage, ProblemGeneration, ProblemGenerationTestCase
@@ -113,6 +114,7 @@ async def ai_chat(
     system_prompt = (
         "You are CodeForge AI, a helpful coding assistant for a competitive programming platform.\n\n"
         "Be encouraging, clear, and educational.\n\n"
+        + TERSE_STYLE + "\n\n"
         + problem_context
     )
 

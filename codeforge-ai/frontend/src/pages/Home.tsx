@@ -6,6 +6,7 @@ import api from '../lib/api';
 export default function Home() {
   const { token } = useAuth();
   const [stats, setStats] = useState({ total: 0, easy: 0, medium: 0, hard: 0 });
+  const [daily, setDaily] = useState<any>(null);
 
   useEffect(() => {
     api.get('/problems/stats').then(res => {
@@ -16,6 +17,7 @@ export default function Home() {
         hard: res.data.hard || 0,
       });
     }).catch(() => {});
+    api.get('/problems/daily').then(res => setDaily(res.data)).catch(() => {});
   }, []);
 
   return (
@@ -73,6 +75,26 @@ export default function Home() {
             <div className="stat-label">Difficulties</div>
           </div>
         </div>
+
+        {daily && (
+          <div className="glass-card" style={{ maxWidth: '1000px', margin: '40px auto 0', padding: '20px 24px', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <span className={`difficulty-badge ${daily.difficulty}`}>{daily.difficulty}</span>
+            <div style={{ flex: 1, minWidth: '220px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
+                Problem of the day
+              </div>
+              <Link to={`/problems/${daily.slug}`} style={{ fontWeight: 700, fontSize: '17px', color: 'inherit' }}>
+                {daily.title}
+              </Link>
+              <div style={{ marginTop: '6px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                {(daily.topics || []).slice(0, 3).map((t: string) => <span key={t} className="topic-tag">{t}</span>)}
+              </div>
+            </div>
+            <Link to={`/problems/${daily.slug}`}>
+              <button className="btn btn-primary">Solve it</button>
+            </Link>
+          </div>
+        )}
 
         <div className="features-grid" style={{ maxWidth: '1000px', margin: '60px auto 0', padding: '0 24px' }}>
           <div className="feature-card">
