@@ -38,3 +38,6 @@ htmlcov/
 
 # Docker
 docker/*.env
+
+# Netlify (linking writes .netlify/state.json)
+.netlify/

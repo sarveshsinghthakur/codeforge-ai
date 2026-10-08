@@ -1,0 +1,17 @@
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  VITE_API_URL = "https://codeforge-backend-sars-projects-d2931c00.vercel.app/api"
+  VITE_FIREBASE_API_KEY = "AIzaSyAuifgRe7Z2v_iii4HugYp4s_G8lTNC9dY"
+  VITE_FIREBASE_AUTH_DOMAIN = "composio-6aee9.firebaseapp.com"
+  VITE_FIREBASE_PROJECT_ID = "composio-6aee9"
+  VITE_FIREBASE_MESSAGING_SENDER_ID = "72408237318"
+  VITE_FIREBASE_APP_ID = "1:72408237318:web:043a3b9dfa91edf4fcca87"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
